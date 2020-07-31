@@ -234,7 +234,7 @@ class Sonar_Array:
             sonar.draw(canvas)
 
 class Robot:
-    def __init__(self, pos, co, n_sensor):
+    def __init__(self, pos, co, n_sensor, goal_pos):
         self.pos = pos
         self.history = [pos]
         self.co = co
@@ -242,6 +242,8 @@ class Robot:
         self.s_array = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, self.co)
         self.goal_brg = brg_in_deg(self.pos, goal_pos)
         self.obstacles_in_view = []
+        self.goal_pos = goal_pos
+        
     
     def get_obstacles_in_view(self):
         return self.obstacles_in_view
@@ -269,6 +271,38 @@ class Robot:
 
         #move the robot by one step...
         self.move(1)
+        print("1 move")
+        #print("Is there an obstacle hit :{}".format(self.has_hit_obstacle(full_obstacle_list)))
+        print("Did the robot reach the final destination :{}".format(self.has_reached_goal(goal_pos)))
+        return self.has_hit_obstacle(full_obstacle_list), self.has_reached_goal(goal_pos)
+
+    def has_reached_goal(self, goal_pos):
+        print(f"self.pos={self.pos}, goal_pos={goal_pos}")
+        x = self.pos[0]
+        y = self.pos[1]
+        radius = 12.5
+        center_x = goal_pos[0]
+        center_y = goal_pos[1]
+        print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+        if (x - center_x)**2 + (y - center_y)**2 < radius**2:
+            print("WE REACHED THE GOAL! CONGRATS!!!!")
+            return True
+        return False
+    
+    def has_hit_obstacle(self, full_obstacle_list):
+        print(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
+        x = self.pos[0]
+        y = self.pos[1]
+        radius = 12.5
+
+        for obstacle_pos in full_obstacle_list:
+            center_x = obstacle_pos[0]
+            center_y = obstacle_pos[1]
+            print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+            if (x - center_x)**2 + (y - center_y)**2 < radius**2:
+                print("WE HIT THE OBSTACLE! START CRYING!!!!")
+                return True
+        return False
 
     def path_is_clear(self):#return True if there is a clear path to the goal
         goal_brg = brg_in_deg(self.pos, goal_pos)
@@ -348,7 +382,7 @@ n_sensor = 16
 
 #create a sonar array
 #s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = Robot(robot_pos, robot_co, n_sensor)
+r1 = Robot(robot_pos, robot_co, n_sensor,goal_pos)
 
 r1.update()
 #define event handlers
@@ -421,9 +455,9 @@ txt_r_co = f1.add_input("Robot Co", alter_co, 100)
 btn_step = f1.add_button("Step", step, 100)
 btn_add_obs = f1.add_button("Add Obs", add_obs, 100)
 
-f1.set_draw_handler(draw)
-f1.set_mouseclick_handler(click)
+#f1.set_draw_handler(draw)
+#f1.set_mouseclick_handler(click)
 
 #start simplegui
 
-f1.start()
+#f1.start()
