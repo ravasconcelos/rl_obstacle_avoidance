@@ -46,8 +46,7 @@ class Robot:
         #m5e the robot by one step...
         self.move(2)
         print(f"master_policy.keys()={master_policy.keys()}")
-        self.has_hit_obstacle(full_obstacle_list)
-        self.has_reached_goal(goal_pos)
+        return self.has_hit_obstacle(full_obstacle_list), self.has_reached_goal(goal_pos)
 
     def path_is_clear(self, goal_pos):#return True if there is a clear path to the goal
         goal_brg = utils.brg_in_deg(self.pos, goal_pos)
