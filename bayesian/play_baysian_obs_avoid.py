@@ -14,20 +14,22 @@ import constants
 
 g_state = "None"
 
-start_pos = [10,10]
-robot_pos = [10, 10]
+#start_pos = [10,10]
+#robot_pos = [10, 10]
 robot_co = 1
-goal_pos = [450,450]
+#goal_pos = [450,450]
 
-#obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
-full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
+#full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
 
-#create a robot with 6 sensors
-n_sensor = 16  
+robot_pos=[337.135774033879, 308.1398152539053]
+goal_pos=[343, 305]
+full_obstacle_list=[(499, 180), (263, 7), (121, 333), (328, 233), (3, 424), (86, 173), (356, 275), (204, 426), (40, 231), (367, 38), (431, 304), (239, 349), (290, 363), (79, 283), (69, 166), (123, 265)]
+
+start_pos = robot_pos
 
 #create a sonar array
 #s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = robot_baysian_obs_avoid.Robot(robot_pos, robot_co, n_sensor, goal_pos)
+r1 = robot_baysian_obs_avoid.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
 #define event handlers

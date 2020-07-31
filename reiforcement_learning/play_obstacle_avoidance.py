@@ -23,12 +23,9 @@ goal_pos = [450,450]
 #obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
 full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
 
-#create a robot with 6 sensors
-n_sensor = 16 
-
 #create a sonar array
 #s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = robot.Robot(robot_pos, robot_co, n_sensor, goal_pos)
+r1 = robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
 #define event handlers

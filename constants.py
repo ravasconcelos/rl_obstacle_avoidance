@@ -7,3 +7,7 @@ SENSOR_MAX_R = 20 # max range that each sensor can report
 SENSOR_ALERT_R = 20 #range within which sensor reports are acted upon
 TURN_SCALE_FACTOR = 2 # how drastic do we want the turns to be
 SAFETY_DISTANCE = 20
+
+N_SENSOR = 16 
+N_OBSTACLES = 16
+N_EPISODES = 200
