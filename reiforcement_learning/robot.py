@@ -46,6 +46,8 @@ class Robot:
         #m5e the robot by one step...
         self.move(2)
         print(f"master_policy.keys()={master_policy.keys()}")
+        self.has_hit_obstacle(full_obstacle_list)
+        self.has_reached_goal(goal_pos)
 
     def path_is_clear(self, goal_pos):#return True if there is a clear path to the goal
         goal_brg = utils.brg_in_deg(self.pos, goal_pos)
@@ -107,3 +109,31 @@ class Robot:
         #draw history
         for point in self.history:
             canvas.draw_circle(point,2,2, "lime")
+    
+    def has_hit_obstacle(self, full_obstacle_list):
+        print(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
+        x = self.pos[0]
+        y = self.pos[1]
+        radius = constants.OBSTACLE_RAD
+
+        for obstacle_pos in full_obstacle_list:
+            center_x = obstacle_pos[0]
+            center_y = obstacle_pos[1]
+            print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+            if (x - center_x)**2 + (y - center_y)**2 < radius**2:
+                print("WE HIT THE OBSTACLE! START CRYING!!!!")
+                return True
+        return False
+
+    def has_reached_goal(self, goal_pos):
+        print(f"self.pos={self.pos}, goal_pos={goal_pos}")
+        x = self.pos[0]
+        y = self.pos[1]
+        radius = constants.OBSTACLE_RAD
+        center_x = goal_pos[0]
+        center_y = goal_pos[1]
+        print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+        if (x - center_x)**2 + (y - center_y)**2 < radius**2:
+            print("WE REACHED THE GOAL! CONGRATS!!!!")
+            return True
+        return False

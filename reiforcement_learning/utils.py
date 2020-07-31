@@ -118,7 +118,7 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
         _, obs_location_onGrid = find_location_onMap(obstacle_pos)
         obs_location_onGrid_array.append((obs_location_onGrid[0],obs_location_onGrid[1]))
     
-    end_state = calculate_end_state_onGrid(mylocation_onMap, my_location_onGrid, obs_location_onGrid_array, goal_pos)
+    end_state = calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos)
 
     policy_key = f"{end_state}|{obs_location_onGrid_array}"
     print(f"policy_key={policy_key}")
@@ -134,7 +134,7 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     print(f"direction={direction}")
     return direction
 
-def calculate_end_state_onGrid(mylocation_onMap, my_location_onGrid, obs_location_onGrid_array, goal_pos):
+def calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos):
 
     print(f"obs_location_onGrid_array={obs_location_onGrid_array}")
 
@@ -143,17 +143,18 @@ def calculate_end_state_onGrid(mylocation_onMap, my_location_onGrid, obs_locatio
     end_state = None
 
     for state in obs_location_onGrid_array:
-        possible_end_states.remove(state)      
-    print(f"mylocation_onMap={mylocation_onMap}, goal_pos={goal_pos}, possible_end_states={possible_end_states}")
+        if state in possible_end_states:
+            possible_end_states.remove(state)      
+    print(f"mylocation={mylocation}, goal_pos={goal_pos}, possible_end_states={possible_end_states}")
 
     # agent is in the bottom right of the target    
-    if mylocation_onMap[0] > goal_pos[0] and mylocation_onMap[1] > goal_pos[1]:
+    if mylocation[0] > goal_pos[0] and mylocation[1] > goal_pos[1]:
         end_state = (0,0)
     # agent is in the top right of the target    
-    elif mylocation_onMap[0] > goal_pos[0] and mylocation_onMap[1] < goal_pos[1]:
+    elif mylocation[0] > goal_pos[0] and mylocation[1] < goal_pos[1]:
         end_state = (3,0)
     # agent is in the top left of the target    
-    elif mylocation_onMap[0] < goal_pos[0] and mylocation_onMap[1] < goal_pos[1]:
+    elif mylocation[0] < goal_pos[0] and mylocation[1] < goal_pos[1]:
         end_state = (3,3)
     # agent is in the bottom left of the target    
     else:

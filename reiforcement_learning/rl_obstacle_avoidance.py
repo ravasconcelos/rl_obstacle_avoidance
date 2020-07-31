@@ -8,8 +8,9 @@ import constants
 import utils
 import robot
 
-
-
+# define constants
+FRAME_SIZE = 500
+SMALL_GRID_SIZE = 50
        
 #define globals
 
@@ -18,15 +19,16 @@ g_state = "None"
 start_pos = [10,10]
 robot_pos = [10, 10]
 robot_co = 1
+goal_pos = [450,450]
 
-goal_pos = [500,500]
 #obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
-full_obstacle_list = [(10,200),(250, 110), (200,280),(220,200), (300,300), (200,100), (400,150),(400, 110), 
-                 (430, 390), (201, 304), (135, 281), 
-                 (286, 373), (175, 280), (250, 375), (139, 327), (369, 278), 
-                 (295, 196), (210, 111),(100,100),(110,110),(79,250)]
-#create a robot with 6 sensors
+full_obstacle_list = [(10,200)]
+#,(250, 110), (200,280),(220,200), (300,300), (200,100), (400,150),(400, 110), 
+#                 (430, 390), (201, 304), (135, 281), 
+#                 (286, 373), (175, 280), (250, 375), (139, 327), (369, 278), 
+#                 (295, 196), (210, 111),(100,100),(110,110),(79,250)]
 
+#create a robot with 6 sensors
 n_sensor = 16 
 
 #create a sonar array
@@ -72,6 +74,13 @@ def alter_co(text):
     r1.update()
             
 def draw(canvas):
+
+    # draw grids
+    for x in range(0, FRAME_SIZE, SMALL_GRID_SIZE):
+        canvas.draw_line((x, 0), (x, FRAME_SIZE), 1, 'Gray')
+    for y in range(0,FRAME_SIZE,SMALL_GRID_SIZE):
+        canvas.draw_line((0, y), (FRAME_SIZE, y), 1, 'Gray')
+
     #draw start 
     canvas.draw_circle(start_pos, 4, 3, "red")
     canvas.draw_text("S", [start_pos[0] + 10, start_pos[1] +10], 16, "red")
@@ -96,7 +105,7 @@ def add_obs():
     
 #create simplegui controls
 
-f1 = simplegui.create_frame("Obs Avoidance", 500, 500)
+f1 = simplegui.create_frame("Obs Avoidance", FRAME_SIZE, FRAME_SIZE)
 #btn_start = f1.add_button("Set Start", set_start, 100)
 btn_goal = f1.add_button("Set Goal", set_goal, 100)
 btn_robot = f1.add_button("Set Robot", set_robot_pos, 100)
