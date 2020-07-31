@@ -95,12 +95,19 @@ def find_location_onMap(pos):
       i1+=50
     i+=50
 
-#To to convert to 4x4 grid each is 12.5 X 12.5 pixels
-  location_in_the_grid[0]=int(location_in_the_grid[0]/12.5)
-  location_in_the_grid[1]=int(location_in_the_grid[1]/12.5)
-#To to convert to 5x5 map each sqaure is 100X100 pixel
-  location_in_the_map[0]=int(location_in_the_map[0]/50)
-  location_in_the_map[1]=int(location_in_the_map[1]/50)
+  if len(location_in_the_grid) == 2:
+    #To to convert to 4x4 grid each is 12.5 X 12.5 pixels
+    location_in_the_grid[0]=int(location_in_the_grid[0]/12.5)
+    location_in_the_grid[1]=int(location_in_the_grid[1]/12.5)
+    #To to convert to 5x5 map each sqaure is 100X100 pixel
+    location_in_the_map[0]=int(location_in_the_map[0]/50)
+    location_in_the_map[1]=int(location_in_the_map[1]/50)
+  else:
+    print(f"Some bug here... pos={pos}")  
+    location_in_the_grid.append(0)      
+    location_in_the_grid.append(0)      
+    location_in_the_map.append(0)      
+    location_in_the_map.append(0)      
   return location_in_the_map, location_in_the_grid
 
 

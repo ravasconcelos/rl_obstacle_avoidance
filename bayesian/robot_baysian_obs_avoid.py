@@ -1,20 +1,29 @@
 #implementing a robot obstacle avoidance algorithm
 
 #import libraries
-import simpleguitk as simplegui
 import math
 import random
+import constants
 
 #define constants
 
-OBSTACLE_RAD = 30 # how big (radius) are the obstacles
-ROBOT_RAD = 20 # how big (radius) is the robot?
+OBSTACLE_RAD = 12.5 # how big (radius) are the obstacles
+ROBOT_RAD = 50 # how big (radius) is the robot?
 SENSOR_FOV = 10.0 # FOV of each sensor THIS MUST BE A FLOAT!!!!!! 
-SENSOR_MAX_R = 100 # max range that each sensor can report
-SENSOR_ALERT_R = 50 #range within which sensor reports are acted upon
+SENSOR_MAX_R = 20 # max range that each sensor can report
+SENSOR_ALERT_R = 20 #range within which sensor reports are acted upon
 TURN_SCALE_FACTOR = 2 # how drastic do we want the turns to be
-SAFETY_DISTANCE = 50
+SAFETY_DISTANCE = 20
+
 #helper functions
+
+goal_pos = [570,380]
+n_sensor = 16 
+full_obstacle_list = [(250, 110), (350, 110), 
+                 (300, 230), (201, 304), (135, 281), 
+                 (206, 353), (75, 280), (250, 375), (139, 327), (389, 138), 
+                 (395, 196), (310, 411)]
+
 
 def rel_brg_fm_offset_sensor(true_hdg, sensor_offset, tgt_brg):
     #given robot's true heading, the sensor offset angle and the
@@ -340,7 +349,7 @@ class Robot:
     
     def delete_history(self):
         self.history = []
-   
+
     def draw(self, canvas):
         #Draw the robot
         canvas.draw_circle(self.pos, 4, 3, "yellow")
@@ -356,108 +365,8 @@ class Robot:
         #draw the obstacles in view
         for obs in self.obstacles_in_view:
             canvas.draw_circle(obs,2,1, "red")
-            canvas.draw_circle(obs,OBSTACLE_RAD, 1, "green") 
+            canvas.draw_circle(obs,constants.OBSTACLE_RAD, 1, "green") 
         #draw history
         for point in self.history:
-            canvas.draw_circle(point,2,2, "lime")
+            canvas.draw_circle(point,2,2, "lime")        
         
-        
-#define globals
-
-g_state = "None"
-
-start_pos = [100,100]
-robot_pos = [150, 150]
-robot_co = 130
-goal_pos = [570,380]
-#obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
-full_obstacle_list = [(250, 110), (350, 110), 
-                 (300, 230), (201, 304), (135, 281), 
-                 (206, 353), (75, 280), (250, 375), (139, 327), (389, 138), 
-                 (395, 196), (310, 411)]
-
-#create a robot with 6 sensors
-
-n_sensor = 16 
-
-#create a sonar array
-#s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = Robot(robot_pos, robot_co, n_sensor,goal_pos)
-
-r1.update()
-#define event handlers
-
-def click(pos):
-    global g_state, start_pos, goal_pos, robot_pos
-    if g_state == "Start":
-        start_pos = pos
-        r1.set_pos(list(pos))
-    elif g_state == "Goal":
-        goal_pos = pos
-        r1.set_co(brg_in_deg(r1.get_pos(), pos))
-    elif g_state == "Set Robot":
-        r1.set_co(brg_in_deg(r1.get_pos(), pos))
-        r1.set_pos(list(pos))
-        r1.delete_history()
-    elif g_state == "Add Obs":
-        full_obstacle_list.append(pos)
-        print(full_obstacle_list)
-        #update the robot
-    r1.update()
-    g_state = "None"
-        
-def set_start():
-    global g_state
-    g_state = "Start"
-    
-def set_goal():
-    global g_state
-    g_state = "Goal"
-
-def set_robot_pos():
-    global g_state
-    g_state = "Set Robot"
-
-def alter_co(text):
-    r1.set_co(float(text))
-    r1.update()
-            
-def draw(canvas):
-    #draw start 
-    canvas.draw_circle(start_pos, 4, 3, "red")
-    canvas.draw_text("S", [start_pos[0] + 10, start_pos[1] +10], 16, "red")
-    #draw goal
-    canvas.draw_circle(goal_pos, 4, 3, "green")
-    canvas.draw_text("G", [goal_pos[0] + 10, goal_pos[1] +10], 16, "green")
-    #draw the obstacles
-    for obs in full_obstacle_list:
-        canvas.draw_circle(obs,2,1, "red")
-        canvas.draw_circle(obs,OBSTACLE_RAD, 1, "white") 
-    
-    #draw sonar lines...
-    r1.draw(canvas)
-
-def step():
-    r1.update()
-
-def add_obs():
-    global g_state
-    g_state = "Add Obs"
-    
-    
-#create simplegui controls
-
-f1 = simplegui.create_frame("Obs Avoidance", 1000, 800)
-btn_start = f1.add_button("Set Start", set_start, 100)
-btn_goal = f1.add_button("Set Goal", set_goal, 100)
-btn_robot = f1.add_button("Set Robot", set_robot_pos, 100)
-txt_r_co = f1.add_input("Robot Co", alter_co, 100)
-btn_step = f1.add_button("Step", step, 100)
-btn_add_obs = f1.add_button("Add Obs", add_obs, 100)
-
-#f1.set_draw_handler(draw)
-#f1.set_mouseclick_handler(click)
-
-#start simplegui
-
-#f1.start()

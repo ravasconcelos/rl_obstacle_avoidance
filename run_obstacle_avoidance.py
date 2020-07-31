@@ -10,13 +10,14 @@ import sonar_array
 import constants
 import utils
 import robot
-import baysian_obs_avoid
+import robot_baysian_obs_avoid
+import matplotlib.pyplot as plt
 
 # define constants
 FRAME_SIZE = 500
 N_SENSOR = 16 
 N_OBSTACLES = 16
-N_EPISODES = 10
+N_EPISODES = 50
 
 def create_random_escalar():
     return random.randint(0,FRAME_SIZE)
@@ -42,7 +43,9 @@ def play_episode():
 
     #create a sonar array
     r1 = robot.Robot(robot_pos, robot_co, N_SENSOR, goal_pos)
-    r2 = baysian_obs_avoid.Robot(robot_pos, robot_co, N_SENSOR, goal_pos)
+    #r2 = baysian_obs_avoid.Robot(robot_pos, robot_co, N_SENSOR, goal_pos)
+    r2 = robot_baysian_obs_avoid.Robot(robot_pos, robot_co, N_SENSOR, goal_pos)
+    
 
 
     step_number1 = 1
@@ -99,3 +102,66 @@ print("Steps1: ", episodes_data["steps1"])
 print("Success1: ", episodes_data["success1"])
 print("Steps2: ", episodes_data["steps2"])
 print("Success2: ", episodes_data["success2"])
+
+passed_episodes = {
+    "x" : [],
+    "y" : [],
+    "rl" : 0,
+    "bayesian" : 0
+}
+failed_episodes = {
+    "x" : [],
+    "y" : []
+}
+
+for episode_index in range(N_EPISODES):
+    if episodes_data["success1"][episode_index]:
+        passed_episodes["x"].append(episode_index)
+        passed_episodes["y"].append(episodes_data["steps1"][episode_index])
+        passed_episodes["rl"] += 1
+    if episodes_data["success2"][episode_index]:
+        passed_episodes["x"].append(episode_index)
+        passed_episodes["y"].append(episodes_data["steps2"][episode_index])
+        passed_episodes["bayesian"] += 1
+
+for episode_index in range(N_EPISODES):
+    if episodes_data["success1"][episode_index] == False:
+        failed_episodes["x"].append(episode_index)
+        failed_episodes["y"].append(episodes_data["steps1"][episode_index])
+    if episodes_data["success2"][episode_index] == False:
+        failed_episodes["x"].append(episode_index)
+        failed_episodes["y"].append(episodes_data["steps2"][episode_index])
+
+
+fig, axes = plt.subplots(2)
+fig.suptitle('Obstacle Avoidance')
+episode_steps_plot = axes[0]
+episode_steps_plot.set_title("Episode Steps") 
+
+episode_steps_plot.plot(episodes_data["steps1"], "Blue", label = "Reinforcement Learning")
+episode_steps_plot.plot(episodes_data["steps2"], "Orange", label = "Baysian")
+episode_steps_plot.scatter(passed_episodes["x"], passed_episodes["y"], label= "Reached the Goal", color= "green",  
+            marker= "*", s=30) 
+episode_steps_plot.scatter(failed_episodes["x"], failed_episodes["y"], label= "Hit an Obstacle", color= "red",  
+            marker= "s", s=30) 
+
+episode_steps_plot.set(xlabel='Episodes', ylabel='Steps')
+episode_steps_plot.legend()
+
+print("Accuracy:")
+rl_accuracy = passed_episodes["rl"]/N_EPISODES*100
+print(f"Reinforcement Learning: {rl_accuracy}%")
+bayesian_accuracy = passed_episodes["bayesian"]/N_EPISODES*100
+print(f"Baysian: {bayesian_accuracy}%")
+
+accuracy_plot = axes[1]
+accuracy_plot.set_title("Accuracy") 
+accuracy_plot.set(xlabel='Algorithms', ylabel='Percentage')
+accuracy_plot.legend()
+accuracy_plot.bar(["Reinforcement Learning","Bayesian"], [rl_accuracy, bayesian_accuracy])
+
+
+plt.tight_layout()
+plt.show()
+
+
