@@ -11,6 +11,7 @@ I_was_here=[0,0]
 
 class Robot:
     def __init__(self, pos, co, n_sensor,goal_pos):
+        self.steps = 0
         self.pos = pos
         self.history = [pos]
         self.co = co
@@ -23,6 +24,7 @@ class Robot:
         return self.obstacles_in_view
     
     def update(self, full_obstacle_list, goal_pos):
+        self.steps += 1
         self.obstacles_in_view = [] #delete all the old obstacles in view
         for obs in full_obstacle_list:
             if utils.dist(self.pos, obs) < constants.SENSOR_MAX_R:
@@ -43,8 +45,8 @@ class Robot:
             pass
             #self.co = brg_in_deg(self.pos, goal_pos)
 
-        #m5e the robot by one step...
-        self.move(2)
+        #the robot by one step...
+        self.move(1)
         print(f"master_policy.keys()={master_policy.keys()}")
         return self.has_hit_obstacle(full_obstacle_list), self.has_reached_goal(goal_pos)
 
@@ -108,6 +110,10 @@ class Robot:
         #draw history
         for point in self.history:
             canvas.draw_circle(point,2,2, "lime")
+        
+        #print(f"Robot.draw - Steps = {self.steps}")
+        canvas.draw_text(f"Steps = {self.steps}", (5, 500), 12, 'White')
+
     
     def has_hit_obstacle(self, full_obstacle_list):
         print(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")

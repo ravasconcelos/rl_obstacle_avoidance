@@ -1,7 +1,10 @@
 import math
 import random
-import constants
 import utils
+import sys
+sys.path.insert(0,'../')
+sys.path.insert(0,'../')
+import constants
 
 class Sonar:
     def __init__(self, index, FOV, max_r, robot_co):

@@ -1,3 +1,5 @@
+FRAME_SIZE = 500
+SMALL_GRID_SIZE = 50
 OBSTACLE_RAD = 12.5 # how big (radius) are the obstacles
 ROBOT_RAD = 50 # how big (radius) is the robot?
 SENSOR_FOV = 10.0 # FOV of each sensor THIS MUST BE A FLOAT!!!!!! 

@@ -5,46 +5,31 @@ import simpleguitk as simplegui
 import math
 import random
 import robot_baysian_obs_avoid
+import sys
+sys.path.insert(0,'../')
+sys.path.insert(0,'../')
 import constants
 
-
-#define constants
-
-OBSTACLE_RAD = 12.5 # how big (radius) are the obstacles
-ROBOT_RAD = 50 # how big (radius) is the robot?
-SENSOR_FOV = 10.0 # FOV of each sensor THIS MUST BE A FLOAT!!!!!! 
-SENSOR_MAX_R = 20 # max range that each sensor can report
-SENSOR_ALERT_R = 20 #range within which sensor reports are acted upon
-TURN_SCALE_FACTOR = 2 # how drastic do we want the turns to be
-SAFETY_DISTANCE = 20
-
-#helper functions
-
-    
-        
 #define globals
 
 g_state = "None"
 
-start_pos = [100,100]
-robot_pos = [150, 150]
-robot_co = 130
-goal_pos = [570,380]
+start_pos = [10,10]
+robot_pos = [10, 10]
+robot_co = 1
+goal_pos = [450,450]
+
 #obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
-full_obstacle_list = [(250, 110), (350, 110), 
-                 (300, 230), (201, 304), (135, 281), 
-                 (206, 353), (75, 280), (250, 375), (139, 327), (389, 138), 
-                 (395, 196), (310, 411)]
+full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
 
 #create a robot with 6 sensors
-
-n_sensor = 16 
+n_sensor = 16  
 
 #create a sonar array
 #s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = robot_baysian_obs_avoid.Robot(robot_pos, robot_co, n_sensor,goal_pos)
+r1 = robot_baysian_obs_avoid.Robot(robot_pos, robot_co, n_sensor, goal_pos)
 
-r1.update()
+r1.update(full_obstacle_list, goal_pos)
 #define event handlers
 
 def click(pos):
@@ -54,16 +39,16 @@ def click(pos):
         r1.set_pos(list(pos))
     elif g_state == "Goal":
         goal_pos = pos
-        r1.set_co(brg_in_deg(r1.get_pos(), pos))
+        r1.set_co(robot_baysian_obs_avoid.brg_in_deg(r1.get_pos(), pos))
     elif g_state == "Set Robot":
-        r1.set_co(brg_in_deg(r1.get_pos(), pos))
+        r1.set_co(robot_baysian_obs_avoid.brg_in_deg(r1.get_pos(), pos))
         r1.set_pos(list(pos))
         r1.delete_history()
     elif g_state == "Add Obs":
         full_obstacle_list.append(pos)
         print(full_obstacle_list)
         #update the robot
-    r1.update()
+    r1.update(full_obstacle_list, goal_pos)
     g_state = "None"
         
 def set_start():
@@ -83,6 +68,12 @@ def alter_co(text):
     r1.update()
             
 def draw(canvas):
+    # draw grids
+    for x in range(0, constants.FRAME_SIZE, constants.SMALL_GRID_SIZE):
+        canvas.draw_line((x, 0), (x, constants.FRAME_SIZE), 1, 'Gray')
+    for y in range(0,constants.FRAME_SIZE,constants.SMALL_GRID_SIZE):
+        canvas.draw_line((0, y), (constants.FRAME_SIZE, y), 1, 'Gray')
+
     #draw start 
     canvas.draw_circle(start_pos, 4, 3, "red")
     canvas.draw_text("S", [start_pos[0] + 10, start_pos[1] +10], 16, "red")
@@ -92,7 +83,7 @@ def draw(canvas):
     #draw the obstacles
     for obs in full_obstacle_list:
         canvas.draw_circle(obs,2,1, "red")
-        canvas.draw_circle(obs,OBSTACLE_RAD, 1, "white") 
+        canvas.draw_circle(obs, constants.OBSTACLE_RAD, 1, "white") 
     
     #draw sonar lines...
     r1.draw(canvas)
@@ -107,7 +98,7 @@ def add_obs():
     
 #create simplegui controls
 
-f1 = simplegui.create_frame("Obs Avoidance", 1000, 800)
+f1 = simplegui.create_frame("Obs Avoidance", constants.FRAME_SIZE, constants.FRAME_SIZE)
 btn_start = f1.add_button("Set Start", set_start, 100)
 btn_goal = f1.add_button("Set Goal", set_goal, 100)
 btn_robot = f1.add_button("Set Robot", set_robot_pos, 100)

@@ -3,27 +3,10 @@
 #import libraries
 import math
 import random
+import sys
+sys.path.insert(0,'../')
+sys.path.insert(0,'../')
 import constants
-
-#define constants
-
-OBSTACLE_RAD = 12.5 # how big (radius) are the obstacles
-ROBOT_RAD = 50 # how big (radius) is the robot?
-SENSOR_FOV = 10.0 # FOV of each sensor THIS MUST BE A FLOAT!!!!!! 
-SENSOR_MAX_R = 20 # max range that each sensor can report
-SENSOR_ALERT_R = 20 #range within which sensor reports are acted upon
-TURN_SCALE_FACTOR = 2 # how drastic do we want the turns to be
-SAFETY_DISTANCE = 20
-
-#helper functions
-
-goal_pos = [570,380]
-n_sensor = 16 
-full_obstacle_list = [(250, 110), (350, 110), 
-                 (300, 230), (201, 304), (135, 281), 
-                 (206, 353), (75, 280), (250, 375), (139, 327), (389, 138), 
-                 (395, 196), (310, 411)]
-
 
 def rel_brg_fm_offset_sensor(true_hdg, sensor_offset, tgt_brg):
     #given robot's true heading, the sensor offset angle and the
@@ -50,6 +33,7 @@ def brg_in_deg(p0, p1):#bearing only in degrees
     return b
 
 def dist(p1, p0):#distance only
+    print(f"dist - p1={p1}, p0={p0}")
     return math.sqrt((p1[0] - p0[0])**2+(p1[1]-p0[1])**2)
 
 def dist_and_brg_in_deg(p0, p1):#bearing and distance in degrees between two points
@@ -113,14 +97,14 @@ class Sonar:
         
         for obs in obstacle_list:# find objects within max_r and inside FOV
             #print "pinging for robot_co:", robot_co
-            can_observe, d = self.can_observe(robot_co, obs, OBSTACLE_RAD)
+            can_observe, d = self.can_observe(robot_co, obs, constants.OBSTACLE_RAD)
             #print can_observe, d
             if can_observe:
                 range_list.append(d) 
         if len(range_list) > 0:
-            self.output = min(range_list)- SAFETY_DISTANCE
+            self.output = min(range_list)- constants.SAFETY_DISTANCE
         else:
-            self.output = SENSOR_MAX_R
+            self.output = constants.SENSOR_MAX_R
         #print "closest point: " , obs , " distance:", self.output
     
     def get_output(self):
@@ -140,7 +124,7 @@ class Sonar:
                 return False, 0
 
             d_test = abs(dist * math.asin(math.radians(rel_brg)))
-            if d_test < OBSTACLE_RAD + ROBOT_RAD: 
+            if d_test < constants.OBSTACLE_RAD + constants.ROBOT_RAD: 
                 self.has_valid_echo = True
                 return True, dist # if the object is within min allowed lateral separation
             else:
@@ -161,7 +145,7 @@ class Sonar:
         
         self.ping_simulated(obstacle_list, platform_co)
         
-        self.vec = create_vector(self.pos, self.output + ROBOT_RAD, self.look_brg)#calculate distance vector for drawing on canvas
+        self.vec = create_vector(self.pos, self.output + constants.ROBOT_RAD, self.look_brg)#calculate distance vector for drawing on canvas
         
         #print "sensor index:", self.index, " look brg:", self.look_brg
     def draw(self, canvas): # draw the sensor's output
@@ -171,9 +155,10 @@ class Sonar:
         #print self.index, " VE:" , self.has_valid_echo
         
 class Sonar_Array:
-    def __init__(self, n_sensors, SENSOR_FOV, SENSOR_MAX_R, robot_co):
+    def __init__(self, n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co):
         self.sonar_list = []
         self.need_diversion_flag = False
+        self.n_sensor = n_sensor
         
         i_pos = list(range(1, int(n_sensor/2) + 1))
         i_neg = list(range(int(-n_sensor/2) , 0))
@@ -201,7 +186,7 @@ class Sonar_Array:
         #print "checking all sonars:"      
         for sonar in self.sonar_list:
             #print "sonar:", sonar.index, " range:", sonar.output
-            if sonar.output < SENSOR_ALERT_R:#has this sonar found anything in danger zone?
+            if sonar.output < constants.SENSOR_ALERT_R:#has this sonar found anything in danger zone?
                 alert = True
                 #print "obstacle found by index ", sonar.index
                 for s1 in self.sonar_list: #process the whole array
@@ -210,12 +195,15 @@ class Sonar_Array:
                     sum_d +=  d
                     sum_wt += s1.index * d * gain
                     #print "I:", s1.index,",D:",int(s1.output), ",sum_D:", sum_d, "sum_wt:",sum_wt
-                rec_index = math.ceil(TURN_SCALE_FACTOR * float(sum_wt)/sum_d) #index of sonar with best LOS
+                if sum_d == 0:
+                    print("sum_d == 0 is this a bug??? what to do?")
+                    sum_d = 1
+                rec_index = math.ceil(constants.TURN_SCALE_FACTOR * float(sum_wt)/sum_d) #index of sonar with best LOS
                 #rec_index = int(TURN_SCALE_FACTOR * float(sum_d)/sum_wt)
                 print("Rec index:", rec_index)
-                if abs(rec_index) > n_sensor/2:
+                if abs(rec_index) > self.n_sensor/2:
                     print("rec index too large")
-                    rec_index = n_sensor/2
+                    rec_index = self.n_sensor/2
 #                    if rec_index < 0:
 #                        rec_index = -n_sensor/2
 #                    else:
@@ -232,7 +220,7 @@ class Sonar_Array:
             return robot_co, False
         elif abs(rec_index) > 0: # some alteration recommended
             print("turn recommended")
-            offset =  rec_index * SENSOR_FOV #how much is the angular offset
+            offset =  rec_index * constants.SENSOR_FOV #how much is the angular offset
             return (robot_co + offset)%360, True
         else:# no diversion needed
             print("no alert no diversion")
@@ -244,11 +232,12 @@ class Sonar_Array:
 
 class Robot:
     def __init__(self, pos, co, n_sensor, goal_pos):
+        self.steps = 0
         self.pos = pos
         self.history = [pos]
         self.co = co
         self.spd = 10 # robot speed in pixels/ step
-        self.s_array = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, self.co)
+        self.s_array = Sonar_Array(n_sensor, constants.SENSOR_FOV, constants.SENSOR_MAX_R, self.co)
         self.goal_brg = brg_in_deg(self.pos, goal_pos)
         self.obstacles_in_view = []
         self.goal_pos = goal_pos
@@ -257,10 +246,11 @@ class Robot:
     def get_obstacles_in_view(self):
         return self.obstacles_in_view
     
-    def update(self):
+    def update(self, full_obstacle_list, goal_pos):
+        self.steps += 1
         self.obstacles_in_view = [] #delete all the old obstacles in view
         for obs in full_obstacle_list:
-            if dist(self.pos, obs) < SENSOR_MAX_R:
+            if dist(self.pos, obs) < constants.SENSOR_MAX_R:
                 self.obstacles_in_view.append(obs)
                 
         #re-calculate direction to goal
@@ -268,22 +258,36 @@ class Robot:
         #re-estimate sensor output by weighted sum method
         co1, need_turn = self.s_array.update(self.pos, self.goal_brg, self.obstacles_in_view, "w_sum")
         #print "Path Clear:", self.path_is_clear()
-        if self.path_is_clear():#can we reach the goal directly from here?
+        if self.path_is_clear(goal_pos):#can we reach the goal directly from here?
             self.co = brg_in_deg(self.pos, goal_pos)
-            print("path clear. ignoring recommendation")
+            #print "path clear. ignoring recommendation"
         elif need_turn: #do we need to turn
             self.co = co1
-            print("path not clear. following recommendation")
+            #print "path not clear. following recommendation"
         else: # path is not fully clear, but there are no immediate obstacles
             pass
             #self.co = brg_in_deg(self.pos, goal_pos)
 
         #move the robot by one step...
         self.move(1)
-        print("1 move")
-        #print("Is there an obstacle hit :{}".format(self.has_hit_obstacle(full_obstacle_list)))
-        print("Did the robot reach the final destination :{}".format(self.has_reached_goal(goal_pos)))
         return self.has_hit_obstacle(full_obstacle_list), self.has_reached_goal(goal_pos)
+
+
+    def path_is_clear(self, goal_pos):#return True if there is a clear path to the goal
+        goal_brg = brg_in_deg(self.pos, goal_pos)
+        for obs in self.obstacles_in_view:
+            if dist(self.pos, goal_pos) > dist(self.pos, obs):
+                d_obs, obs_brg = dist_and_brg_in_deg(self.pos, obs)
+                rel_brg = abs(relative_brg(goal_brg, obs_brg))
+                rel_brg_radians = math.radians(rel_brg)
+                print(f"rel_brg_radians={rel_brg_radians}")
+                if rel_brg_radians < -1 or rel_brg_radians > 1:
+                    print(f"invalid rel_brg_radians={rel_brg_radians}")
+                    return False
+                d_lateral = abs(d_obs * math.asin(rel_brg_radians))
+                if d_lateral < constants.OBSTACLE_RAD + constants.ROBOT_RAD: 
+                    return False
+        return True
 
     def has_reached_goal(self, goal_pos):
         print(f"self.pos={self.pos}, goal_pos={goal_pos}")
@@ -312,21 +316,6 @@ class Robot:
                 print("WE HIT THE OBSTACLE! START CRYING!!!!")
                 return True
         return False
-
-    def path_is_clear(self):#return True if there is a clear path to the goal
-        goal_brg = brg_in_deg(self.pos, goal_pos)
-        for obs in self.obstacles_in_view:
-            if dist(self.pos, goal_pos) > dist(self.pos, obs):
-                d_obs, obs_brg = dist_and_brg_in_deg(self.pos, obs)
-                rel_brg = abs(relative_brg(goal_brg, obs_brg))
-
-                if math.radians(rel_brg) < -1 or math.radians(rel_brg) > 1:
-                    return False, 0
-
-                d_lateral = abs(d_obs * math.asin(math.radians(rel_brg)))
-                if d_lateral < OBSTACLE_RAD + ROBOT_RAD: 
-                    return False
-        return True
     
     def move(self, dT):
                 
@@ -369,4 +358,6 @@ class Robot:
         #draw history
         for point in self.history:
             canvas.draw_circle(point,2,2, "lime")        
+        
+        canvas.draw_text(f"Steps = {self.steps}", (5, 500), 12, 'White')
         

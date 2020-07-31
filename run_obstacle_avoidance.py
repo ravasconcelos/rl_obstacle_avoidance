@@ -12,12 +12,13 @@ import utils
 import robot
 import robot_baysian_obs_avoid
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 
 # define constants
 FRAME_SIZE = 500
 N_SENSOR = 16 
 N_OBSTACLES = 16
-N_EPISODES = 50
+N_EPISODES = 2
 
 def create_random_escalar():
     return random.randint(0,FRAME_SIZE)
@@ -72,7 +73,7 @@ def play_episode():
         print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
         print("")
         print(f"step_number={step_number2}")
-        hit_obstcle2, reach_goal2 = r2.update() 
+        hit_obstcle2, reach_goal2 = r2.update(full_obstacle_list, goal_pos) 
         step_number2 += 1    
     print(f"Completed in {step_number2} steps")
     return step_number1, hit_obstcle1, reach_goal1, step_number2, hit_obstcle2, reach_goal2
@@ -158,7 +159,7 @@ accuracy_plot = axes[1]
 accuracy_plot.set_title("Accuracy") 
 accuracy_plot.set(xlabel='Algorithms', ylabel='Percentage')
 accuracy_plot.legend()
-accuracy_plot.bar(["Reinforcement Learning","Bayesian"], [rl_accuracy, bayesian_accuracy])
+accuracy_plot.bar(["Reinforcement Learning","Bayesian"], [rl_accuracy, bayesian_accuracy], width=0.1)
 
 
 plt.tight_layout()
