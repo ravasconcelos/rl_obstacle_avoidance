@@ -3,6 +3,7 @@ import monte_carlo as montecarlo
 import numpy as np
 import random
 
+
 def brg_in_deg(p0, p1):#bearing only in degrees
     [x1, y1] = p0
     [x2, y2] = p1

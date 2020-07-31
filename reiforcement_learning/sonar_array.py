@@ -4,6 +4,15 @@ import sonar
 import constants
 import utils
 
+EPISILON = 0.1
+
+# add some random ness
+def skip_the_policy():
+    if EPISILON > random.random():
+        return True
+    return False
+
+
 # This function is to check if the obtacles and agent are in the same 12.5x12.5 pixels sqaure
 def check_obstacle(pos, obs_list):
   obstacles=[]
@@ -40,6 +49,15 @@ class Sonar_Array:
 
     def weighted_sum_method(self, robot_pos, robot_co,full_obstacle_list,master_policy,I_was_here,goal_pos):
 
+        if skip_the_policy():
+            offset = random.randint(0,359)
+            print("<<<<<<<<<<<<<<<")
+            print("weighted_sum_method will skip the policy this time")
+            print(f"offset={offset}")
+            print(">>>>>>>>>>>>>>>>")
+            return offset, True
+
+
         print (f"weighted_sum_method, robot_pos={robot_pos}, robot_co={robot_co}")
         #process data by the weighted sum method and 
         #return (1) whether turn is required or not (2) index of recommended sonar LOS to turn to
@@ -49,9 +67,6 @@ class Sonar_Array:
         obs=[]
         
         obs=check_obstacle(robot_pos,full_obstacle_list)
-        print("---------------------------")
-        print("I see obstacles")
-        print("---------------------------")
                
         action = utils.dynamic_policy_finder(robot_pos,obs,master_policy,goal_pos)
         print(f"action={action},")
