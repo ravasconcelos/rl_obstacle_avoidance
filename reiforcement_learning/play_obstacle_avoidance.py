@@ -88,7 +88,7 @@ def draw(canvas):
     r1.draw(canvas)
 
 def step():
-        r1.update()
+        r1.update(full_obstacle_list, goal_pos)
 
 def add_obs():
     global g_state

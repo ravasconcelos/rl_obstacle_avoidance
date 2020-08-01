@@ -354,25 +354,25 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
 
   """## Print results"""
 
-  plt.plot(deltas)
-  plt.show()
+  #plt.plot(deltas)
+  #plt.show()
 
   # find the optimal state-value function
   # V(s) = max[a]{ Q(s,a) }
-  V = {}
-  for s in policy.keys():
-      V[s] = max_dict(Q[s])[1]
+  #V = {}
+  #for s in policy.keys():
+  #    V[s] = max_dict(Q[s])[1]
 
-  print("final values:")
-  print_values(V, grid)
-  print("final policy:")
+  #print("final values:")
+  #print_values(V, grid)
+  #print("final policy:")
   print_policy(policy, grid)
-  print("final Q:")
-  print_Q(Q,grid)
+  #print("final Q:")
+  #print_Q(Q,grid)
   return policy
 
 
 #print (f"returned policy={calculate_gridworld_policy((3,3),[(2,1)])}")
 #print (f"returned policy={calculate_gridworld_policy((4,1),[(0,0)])}")
-print (f"returned policy={calculate_gridworld_policy((4,4),[(2,0),(0,0),(1,0),(4,3)])}")
+#print (f"returned policy={calculate_gridworld_policy((4,4),[(2,0),(0,0),(1,0),(4,3)])}")
 
