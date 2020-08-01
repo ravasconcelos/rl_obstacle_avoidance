@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0,'../')
 sys.path.insert(0,'../')
 import constants
+import logger
 
 def brg_in_deg(p0, p1):#bearing only in degrees
     [x1, y1] = p0
@@ -72,19 +73,19 @@ def rel_brg_fm_offset_sensor(true_hdg, sensor_offset, tgt_brg):
 # this function to find the location of agent or obtacles in the map 
 # it convert 500X500 pixels word to 10x10 squars each with 12.5x12.5 pixxels
 def find_location_onMap(pos):
-    print(f"find_location_onMap - pos={pos}")
+    logger.log(f"find_location_onMap - pos={pos}")
     location_in_the_grid=[]
     location_in_the_map=[]
     x = pos[0]
     y = pos[1]
     location_in_the_map.append(int(x / constants.SMALL_GRID_SIZE))
     location_in_the_map.append(int(y / constants.SMALL_GRID_SIZE))
-    print(f"location_in_the_map={location_in_the_map}")
+    logger.log(f"location_in_the_map={location_in_the_map}")
     rest_x = x % constants.SMALL_GRID_SIZE
     rest_y = y % constants.SMALL_GRID_SIZE
     location_in_the_grid.append(int(rest_x / (constants.SMALL_GRID_SIZE / 4)))
     location_in_the_grid.append(int(rest_y / (constants.SMALL_GRID_SIZE / 4)))
-    print(f"location_in_the_grid={location_in_the_grid}")
+    logger.log(f"location_in_the_grid={location_in_the_grid}")
     return location_in_the_map, location_in_the_grid
 
 
@@ -164,30 +165,30 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
 #         L O R 
 #           D  
 def calculate_obstacle_onGrid(obstacle_pos):
-    print(f"calculate_obstacle_onGrid - obstacle_pos={obstacle_pos}")
+    logger.log(f"calculate_obstacle_onGrid - obstacle_pos={obstacle_pos}")
     obs_location_onGrid_array = []
     obs_onMap, obs_onGrid = find_location_onMap(obstacle_pos)
-    print(f"calculate_obstacle_onGrid - obs_onGrid={obs_onGrid}")
+    logger.log(f"calculate_obstacle_onGrid - obs_onGrid={obs_onGrid}")
     obs_location_onGrid_array.append((obs_onGrid[0],obs_onGrid[1]))
     # Up
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]-constants.OBSTACLE_RAD,obstacle_pos[1]])
     if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        print(f"calculate_obstacle_onGrid - U border_obs_onGrid={border_obs_onGrid}")
+        logger.log(f"calculate_obstacle_onGrid - U border_obs_onGrid={border_obs_onGrid}")
         obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
     # Down
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]+constants.OBSTACLE_RAD,obstacle_pos[1]])
     if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        print(f"calculate_obstacle_onGrid - D border_obs_onGrid={border_obs_onGrid}")
+        logger.log(f"calculate_obstacle_onGrid - D border_obs_onGrid={border_obs_onGrid}")
         obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
     # Left 
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0],obstacle_pos[1]-constants.OBSTACLE_RAD])
     if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        print(f"calculate_obstacle_onGrid - L border_obs_onGrid={border_obs_onGrid}")
+        logger.log(f"calculate_obstacle_onGrid - L border_obs_onGrid={border_obs_onGrid}")
         obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
     # Right
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0],obstacle_pos[1]+constants.OBSTACLE_RAD])
     if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        print(f"calculate_obstacle_onGrid - R border_obs_onGrid={border_obs_onGrid}")
+        logger.log(f"calculate_obstacle_onGrid - R border_obs_onGrid={border_obs_onGrid}")
         obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
     return obs_location_onGrid_array
 
