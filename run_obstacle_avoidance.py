@@ -44,7 +44,13 @@ def play_episode():
     #create a sonar array
     r1 = robot.Robot(robot_pos.copy(), robot_co, constants.N_SENSOR, goal_pos)
     r2 = robot_baysian_obs_avoid.Robot(robot_pos.copy(), robot_co, constants.N_SENSOR, goal_pos)
-    
+
+    print("000000000000000000000000000000000000000000")
+    print("000000000000000000000000000000000000000000")
+    print("Playing episode for Reinforcement Learning Robot")
+    print("000000000000000000000000000000000000000000")
+    print("000000000000000000000000000000000000000000")
+
     step_number1 = 1
     hit_obstcle1, reach_goal1 = False, False
     # Experiment 1
@@ -58,6 +64,12 @@ def play_episode():
         hit_obstcle1, reach_goal1 = r1.update(full_obstacle_list, goal_pos) 
         step_number1 += 1
     print(f"Completed in {step_number1} steps")
+    
+    print("000000000000000000000000000000000000000000")
+    print("000000000000000000000000000000000000000000")
+    print("Playing episode for Bayesian Robot")
+    print("000000000000000000000000000000000000000000")
+    print("000000000000000000000000000000000000000000")
     
     print (f"start_pos={start_pos}")
     print (f"robot_pos={robot_pos}")

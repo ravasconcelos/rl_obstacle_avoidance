@@ -2,8 +2,11 @@ import math
 import random
 import sonar
 import sonar_array
-import constants
 import utils
+import sys
+sys.path.insert(0,'../')
+sys.path.insert(0,'../')
+import constants
 
 #define constants
 master_policy={}
