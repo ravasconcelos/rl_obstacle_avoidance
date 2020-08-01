@@ -34,7 +34,7 @@ def print_Q(Q, grid):
     all_states = sorted(grid.all_states())
     for state in all_states:
         print("| {} |".format(state), end="")
-        if state != (0,0) and state != (3,3):
+        if state in Q:
             for action, value in Q[state].items():
                 print(' {:>6.2f} |'.format(value), end="")
         else:
@@ -142,28 +142,36 @@ def standard_grid():
   # .  .  . .
   # S  .  .  .
   # .  .  .  E
-  g = Grid(4, 4, (2, 0))
+  g = Grid(5, 5, (2, 0))
 #  rewards = {(3, 3): 0}
   rewards = {}
   actions = {
-    #(0, 0): (), End-State
     (0, 0): ('D', 'R'),
     (0, 1): ('D', 'R', 'L'),
     (0, 2): ('D', 'R', 'L'),
-    (0, 3): ('D', 'L'),
+    (0, 2): ('D', 'R', 'L'),
+    (0, 3): ('D', 'R', 'L'),
+    (0, 4): ('D', 'L'),
     (1, 0): ('D', 'R', 'U'),
     (1, 1): ('D', 'R', 'L', 'U'),
     (1, 2): ('D', 'R', 'L', 'U'),
-    (1, 3): ('D', 'U', 'L'),
+    (1, 3): ('D', 'R', 'L', 'U'),
+    (1, 4): ('D', 'U', 'L'),
     (2, 0): ('D', 'U', 'R'),
     (2, 1): ('D', 'R', 'L', 'U'),
     (2, 2): ('D', 'R', 'L', 'U'),
-    (2, 3): ('D', 'U', 'L'),
-    (3, 0): ('U', 'R', ),
-    (3, 1): ('U', 'R', 'L'),
-    (3, 2): ('U', 'R', 'L'),
-    (3, 3): ('U','L')
-    #(3, 3): (), End-State
+    (2, 3): ('D', 'R', 'L', 'U'),
+    (2, 4): ('D', 'U', 'L'),
+    (3, 0): ('U', 'R', 'D'),
+    (3, 1): ('D', 'R', 'L', 'U'),
+    (3, 2): ('D', 'R', 'L', 'U'),
+    (3, 3): ('D', 'R', 'L', 'U'),
+    (3, 4): ('D', 'U', 'L'),
+    (4, 0): ('U', 'R', ),
+    (4, 1): ('U', 'R', 'L'),
+    (4, 2): ('U', 'R', 'L'),
+    (4, 3): ('U', 'R', 'L'),
+    (4, 4): ('U','L')
   }
   g.set(rewards, actions)
   return g
@@ -186,18 +194,27 @@ def negative_grid(step_cost=-0.1):
     (0, 1): step_cost,
     (0, 2): step_cost,
     (0, 3): step_cost,
+    (0, 4): step_cost,
     (1, 0): step_cost,
     (1, 1): step_cost,
     (1, 2): step_cost,
     (1, 3): step_cost,
+    (1, 4): step_cost,
     (2, 0): step_cost,
     (2, 1): step_cost,
     (2, 2): step_cost,
     (2, 3): step_cost,
+    (2, 4): step_cost,
     (3, 0): step_cost,
     (3, 1): step_cost,
     (3, 2): step_cost,
     (3, 3): step_cost,
+    (3, 4): step_cost,
+    (4, 0): step_cost,
+    (4, 1): step_cost,
+    (4, 2): step_cost,
+    (4, 3): step_cost,
+    (4, 4): step_cost,
   })
   return g
 
@@ -337,8 +354,8 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
 
   """## Print results"""
 
-  #plt.plot(deltas)
-  #plt.show()
+  plt.plot(deltas)
+  plt.show()
 
   # find the optimal state-value function
   # V(s) = max[a]{ Q(s,a) }
@@ -346,16 +363,16 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
   for s in policy.keys():
       V[s] = max_dict(Q[s])[1]
 
-  #print("final values:")
-  #print_values(V, grid)
-  #print("final policy:")
-  #print_policy(policy, grid)
-  #print("final Q:")
-  #print_Q(Q,grid)
+  print("final values:")
+  print_values(V, grid)
+  print("final policy:")
+  print_policy(policy, grid)
+  print("final Q:")
+  print_Q(Q,grid)
   return policy
 
 
 #print (f"returned policy={calculate_gridworld_policy((3,3),[(2,1)])}")
-#print (f"returned policy={calculate_gridworld_policy((3,1),[(0,0)])}")
-#rint (f"returned policy={calculate_gridworld_policy((2,1),[(2,0),(0,0),(1,0)])}")
+#print (f"returned policy={calculate_gridworld_policy((4,1),[(0,0)])}")
+print (f"returned policy={calculate_gridworld_policy((4,4),[(2,0),(0,0),(1,0),(4,3)])}")
 

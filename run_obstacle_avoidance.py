@@ -63,6 +63,11 @@ def play_episode():
         print(f"step_number={step_number1}")
         hit_obstcle1, reach_goal1 = r1.update(full_obstacle_list, goal_pos) 
         step_number1 += 1
+        if step_number1 > 400:
+            hit_obstcle1 = True
+            reach_goal1 = False
+            print(f"Too many steps, it will probably take too long to end")
+            break
     print(f"Completed in {step_number1} steps")
     
     print("000000000000000000000000000000000000000000")
