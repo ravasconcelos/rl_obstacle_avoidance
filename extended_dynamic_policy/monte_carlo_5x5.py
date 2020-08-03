@@ -14,6 +14,7 @@ Original file is located at
 
 
 EPISODES = 1000 # number of episodes
+MAX_EPISODE_STEPS = 200
 GAMMA = 0.6
 EPS = 0.4
 ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
@@ -52,6 +53,9 @@ def print_values(V, g):
       else:
         print("%.2f|" % v, end="") # -ve sign takes up an extra space
     print("")
+
+
+
 
 def print_policy(P, g):
   for i in range(g.rows):
@@ -142,7 +146,7 @@ def standard_grid():
   # .  .  . .
   # S  .  .  .
   # .  .  .  E
-  g = Grid(5, 5, (2, 0))
+  g = Grid(5, 5, (2, 2))
 #  rewards = {(3, 3): 0}
   rewards = {}
   actions = {
@@ -241,15 +245,17 @@ def play_episode(grid, policy, pi):
   # returns a list of states and corresponding returns
   # in this version we will NOT use "exploring starts" method
   # instead we will explore using an epsilon-soft policy
-  s = (2, 0)
+  s = (2, 2)
   grid.set_state(s)
   a = policy_using_pi(s,pi)
+  steps = 0
 
   # be aware of the timing
   # each triple is s(t), a(t), r(t)
   # but r(t) results from taking action a(t-1) from s(t-1) and landing in s(t)
   states_actions_rewards = [(s, a, 0)]
   while True:
+    steps += 1
     r = grid.move(a)
     s = grid.current_state()
     if grid.game_over():
@@ -258,6 +264,9 @@ def play_episode(grid, policy, pi):
     else:
       a = policy_using_pi(s,pi)
       states_actions_rewards.append((s, a, r))
+    if steps > MAX_EPISODE_STEPS:
+      print(f"Monte Carlo took more than {MAX_EPISODE_STEPS} steps. It will be skipped.")
+      break  
 
   # calculate the returns by working backwards from the terminal state
   G = 0
@@ -376,3 +385,6 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
 #print (f"returned policy={calculate_gridworld_policy((4,1),[(0,0)])}")
 #print (f"returned policy={calculate_gridworld_policy((4,4),[(2,0),(0,0),(1,0),(4,3)])}")
 
+def print_policy_without_grid(P):
+  grid = negative_grid(step_cost=-1)
+  print_policy(P,grid)

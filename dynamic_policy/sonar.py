@@ -2,8 +2,7 @@ import math
 import random
 import utils
 import sys
-sys.path.insert(0,'../')
-sys.path.insert(0,'../')
+sys.path.insert(0,'..')
 import constants
 
 class Sonar:

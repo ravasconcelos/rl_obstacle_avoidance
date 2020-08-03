@@ -1,10 +1,9 @@
 import math
-import monte_carlo_5x5 as montecarlo
+import monte_carlo as montecarlo
 import numpy as np
 import random
 import sys
-sys.path.insert(0,'../')
-sys.path.insert(0,'../')
+sys.path.insert(0,'..')
 import constants
 import logger
 
@@ -89,6 +88,46 @@ def find_location_onMap(pos):
     return location_in_the_map, location_in_the_grid
 
 
+'''  
+  i=0
+  i1=0
+  loc=0
+  loc1=0
+  for squares in range(0,10):
+    i1=0
+    for quare in range(0,10):
+      loc=0
+      #square.append((i,i1))
+      if (pos[0]>i and pos[0]<=i+50) and (pos[1]>i1 and pos[1]<=i1+50):
+        for rows in range(0,4):
+          loc1=0
+          for col in range(0,4):
+            if ((pos[0]>loc+i and pos[0]<=loc+i+12.5) and (pos[1]>loc1+i1 and pos[1]<=loc1+12.5+i1)):           
+              location_in_the_grid.append(loc)
+              location_in_the_grid.append(loc1)
+              location_in_the_map.append(i)
+              location_in_the_map.append(i1)
+            
+            loc1+=12.5
+          loc+=12.5
+      i1+=50
+    i+=50
+
+  if len(location_in_the_grid) == 2:
+    #To to convert to 4x4 grid each is 12.5 X 12.5 pixels
+    location_in_the_grid[0]=int(location_in_the_grid[0]/12.5)
+    location_in_the_grid[1]=int(location_in_the_grid[1]/12.5)
+    #To to convert to 5x5 map each sqaure is 100X100 pixel
+    location_in_the_map[0]=int(location_in_the_map[0]/50)
+    location_in_the_map[1]=int(location_in_the_map[1]/50)
+  else:
+    print(f"Some bug here... pos={pos}")  
+    location_in_the_grid.append(0)      
+    location_in_the_grid.append(0)      
+    location_in_the_map.append(0)      
+    location_in_the_map.append(0)      
+  return location_in_the_map, location_in_the_grid
+'''
 
 def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     print(f"mylocation={mylocation}, obs={obs}, goal_pos={goal_pos}")

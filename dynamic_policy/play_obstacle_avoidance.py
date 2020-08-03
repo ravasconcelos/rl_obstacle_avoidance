@@ -5,11 +5,11 @@ import random
 import sonar
 import sonar_array
 import utils
-import robot
+import dp_robot
 import sys
-sys.path.insert(0,'../')
-sys.path.insert(0,'../')
+sys.path.insert(0,'..')
 import constants
+import numpy as np
 
 #define globals
 
@@ -25,7 +25,7 @@ full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
 
 #create a sonar array
 #s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
+r1 = dp_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
 #define event handlers
@@ -63,16 +63,18 @@ def set_robot_pos():
 
 def alter_co(text):
     r1.set_co(float(text))
-    r1.update()
+    r1.update(full_obstacle_list, goal_pos)
             
 def draw(canvas):
 
+    #draw_small_grids(canvas)
+
     # draw grids
     for x in range(0, constants.FRAME_SIZE, constants.SMALL_GRID_SIZE):
-        canvas.draw_line((x, 0), (x, constants.FRAME_SIZE), 1, 'Gray')
+        canvas.draw_line((x, 0), (x, constants.FRAME_SIZE), 1, 'White')
     for y in range(0,constants.FRAME_SIZE,constants.SMALL_GRID_SIZE):
-        canvas.draw_line((0, y), (constants.FRAME_SIZE, y), 1, 'Gray')
-
+        canvas.draw_line((0, y), (constants.FRAME_SIZE, y), 1, 'White')
+    
     #draw start 
     canvas.draw_circle(start_pos, 4, 3, "red")
     canvas.draw_text("S", [start_pos[0] + 10, start_pos[1] +10], 16, "red")
@@ -87,8 +89,18 @@ def draw(canvas):
     #draw sonar lines...
     r1.draw(canvas)
 
+    canvas.draw_text(f"Dynamic Policy", (250, 500), 12, 'White')
+
+
+def draw_small_grids(canvas):
+    # draw grids
+    for x in np.arange(0, constants.FRAME_SIZE, constants.OBSTACLE_RAD):
+        canvas.draw_line((x, 0), (x, constants.FRAME_SIZE), 1, 'Aqua')
+    for y in np.arange(0,constants.FRAME_SIZE,constants.OBSTACLE_RAD):
+        canvas.draw_line((0, y), (constants.FRAME_SIZE, y), 1, 'Aqua')
+
 def step():
-        r1.update()
+        r1.update(full_obstacle_list, goal_pos)
 
 def add_obs():
     global g_state
