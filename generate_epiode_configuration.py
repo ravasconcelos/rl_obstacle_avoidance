@@ -1,6 +1,8 @@
 import math
 import random
-import json
+import constants
+
+EPISODE_FILE_NAME = "episodes.py"
 
 def create_random_escalar():
     return random.randint(0,constants.FRAME_SIZE)
@@ -16,31 +18,20 @@ def create_random_setup():
         full_obstacle_list.append((create_random_escalar(),create_random_escalar()))
     return robot_pos, goal_pos, full_obstacle_list
 
+def printEpisodeSetup(f):
+    print("  {", file=f)
+    print(f"    \"robot_pos\" : {create_random_position()},", file=f) 
+    print(f"    \"goal_pos\" : {create_random_position()},", file=f) 
+    full_obstacle_list = []
+    for _ in range(constants.N_OBSTACLES):
+        full_obstacle_list.append((create_random_escalar(),create_random_escalar()))
+    print(f"    \"full_obstacle_list\" : {full_obstacle_list}", file=f) 
+    print("  },", file=f)
 
-import json
-
-appDict = {
-  'name': 'messenger',
-  'playstore': True,
-  'company': 'Facebook',
-  'price': 100
-}
-app_json = json.dumps(appDict)
-print(app_json)
-
-
-f = open("episodes_test.py", "w")
-f.write("EPISODES = [
-    {
-        "robot_pos" : [10, 10],
-        "goal_pos" : [450,450],
-        "full_obstacle_list" : [(50, 100), (300, 210), (410, 300), (400, 310)]
-    },
-    {
-        "robot_pos" : [10, 10],
-        "goal_pos" : [450,450],
-        "full_obstacle_list" : [(50, 100), (300, 210), (410, 300), (400, 310)]
-    },
-]")
+f = open(EPISODE_FILE_NAME, "w")
+print("EPISODES = [", file=f) 
+for _ in range(constants.N_EPISODES*5):
+    printEpisodeSetup(f)
+print("]", file=f)
 f.close()
 

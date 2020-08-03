@@ -82,7 +82,7 @@ episodes_data = {
 }
 
 #for i in range(constants.N_EPISODES):
-for i in range(len(episodes.EPISODES)):
+for i in range(constants.N_EPISODES):
     episode_setup = episodes.EPISODES[i]
     step_number1, hit_obstcle1, reach_goal1 = play_episode(episode_setup["robot_pos"], episode_setup["goal_pos"], episode_setup["full_obstacle_list"])
     episodes_data["episode"].append(i)
@@ -105,13 +105,13 @@ failed_episodes = {
     "y" : []
 }
 
-for episode_index in range(len(episodes.EPISODES)):
+for episode_index in range(constants.N_EPISODES):
     if episodes_data["success1"][episode_index]:
         passed_episodes["x"].append(episode_index)
         passed_episodes["y"].append(episodes_data["steps1"][episode_index])
         passed_episodes["rl"] += 1
 
-for episode_index in range(len(episodes.EPISODES)):
+for episode_index in range(constants.N_EPISODES):
     if episodes_data["success1"][episode_index] == False:
         failed_episodes["x"].append(episode_index)
         failed_episodes["y"].append(episodes_data["steps1"][episode_index])
