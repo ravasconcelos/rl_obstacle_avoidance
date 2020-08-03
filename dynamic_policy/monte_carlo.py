@@ -14,6 +14,7 @@ Original file is located at
 
 
 EPISODES = 1000 # number of episodes
+MAX_EPISODE_STEPS = 200
 GAMMA = 0.6
 EPS = 0.4
 ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
@@ -227,6 +228,8 @@ def play_episode(grid, policy, pi):
   s = (2, 0)
   grid.set_state(s)
   a = policy_using_pi(s,pi)
+  steps = 0
+
 
   # be aware of the timing
   # each triple is s(t), a(t), r(t)
@@ -241,6 +244,9 @@ def play_episode(grid, policy, pi):
     else:
       a = policy_using_pi(s,pi)
       states_actions_rewards.append((s, a, r))
+    if steps > MAX_EPISODE_STEPS:
+      print(f"Monte Carlo took more than {MAX_EPISODE_STEPS} steps. It will be skipped.")
+      break  
 
   # calculate the returns by working backwards from the terminal state
   G = 0

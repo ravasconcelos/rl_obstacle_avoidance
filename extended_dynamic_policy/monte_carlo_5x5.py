@@ -265,7 +265,7 @@ def play_episode(grid, policy, pi):
       a = policy_using_pi(s,pi)
       states_actions_rewards.append((s, a, r))
     if steps > MAX_EPISODE_STEPS:
-      print(f"Monte Carlo took more than {MAX_EPISODE_STEPS} steps. It will be skipped.")
+      print(f"Monte Carlo 5x5 took more than {MAX_EPISODE_STEPS} steps. It will be skipped.")
       break  
 
   # calculate the returns by working backwards from the terminal state
