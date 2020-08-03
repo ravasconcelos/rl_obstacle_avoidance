@@ -28,10 +28,14 @@ def printEpisodeSetup(f):
     print(f"    \"full_obstacle_list\" : {full_obstacle_list}", file=f) 
     print("  },", file=f)
 
+# be sure you know what you are doing if you uncomment the lines below
+# the episode configuration is already created... why to redo it?
+'''
 f = open(EPISODE_FILE_NAME, "w")
 print("EPISODES = [", file=f) 
 for _ in range(constants.N_EPISODES*5):
     printEpisodeSetup(f)
 print("]", file=f)
 f.close()
+'''
 
