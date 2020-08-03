@@ -3,8 +3,7 @@ import monte_carlo as montecarlo
 import numpy as np
 import random
 import sys
-sys.path.insert(0,'../')
-sys.path.insert(0,'../')
+sys.path.insert(0,'..')
 import constants
 import logger
 

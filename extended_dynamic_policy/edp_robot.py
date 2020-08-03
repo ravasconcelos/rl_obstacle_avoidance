@@ -4,13 +4,14 @@ import sonar
 import sonar_array
 import utils
 import sys
-sys.path.insert(0,'../')
-sys.path.insert(0,'../')
+sys.path.insert(0,'..')
 import constants
+import logger
 
 #define constants
 master_policy={}
 I_was_here=[0,0]
+
 
 class Robot:
     def __init__(self, pos, co, n_sensor,goal_pos):
@@ -22,12 +23,19 @@ class Robot:
         self.s_array = sonar_array.Sonar_Array(n_sensor, constants.SENSOR_FOV, constants.SENSOR_MAX_R, self.co)
         self.goal_brg = utils.brg_in_deg(self.pos, goal_pos)
         self.obstacles_in_view = []
+        self.prev_full_obstacle_list_size=0
     
     def get_obstacles_in_view(self):
         return self.obstacles_in_view
     
     def update(self, full_obstacle_list, goal_pos):
+        print("Robot.update()")
         self.steps += 1
+        if self.prev_full_obstacle_list_size != len(full_obstacle_list):
+            print("Environment has been changed. Reset master_policy")
+            self.prev_full_obstacle_list_size = len(full_obstacle_list)
+            master_policy.clear()
+
         self.obstacles_in_view = [] #delete all the old obstacles in view
         for obs in full_obstacle_list:
             if utils.dist(self.pos, obs) < constants.SENSOR_MAX_R:
@@ -37,8 +45,12 @@ class Robot:
         self.goal_brg = utils.brg_in_deg(self.pos, goal_pos)
         #re-estimate sensor output by weighted sum method
         co1, need_turn = self.s_array.update(self.pos, self.goal_brg, self.obstacles_in_view, "w_sum", full_obstacle_list,master_policy,I_was_here,goal_pos)
+        
+        obstacles_in_3x3_grid = utils.check_obstacle_3x3(self.pos,full_obstacle_list)
+        
         #print "Path Clear:", self.path_is_clear()
-        if self.path_is_clear(goal_pos):#can we reach the goal directly from here?
+        #if self.path_is_clear(goal_pos):#can we reach the goal directly from here?
+        if len(obstacles_in_3x3_grid) == 0:
             self.co = utils.brg_in_deg(self.pos, goal_pos)
             print("path clear. ignoring recommendation")
         elif need_turn: #do we need to turn
@@ -119,7 +131,7 @@ class Robot:
 
     
     def has_hit_obstacle(self, full_obstacle_list):
-        print(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
+        logger.log(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
         x = self.pos[0]
         y = self.pos[1]
         radius = constants.OBSTACLE_RAD
@@ -127,20 +139,20 @@ class Robot:
         for obstacle_pos in full_obstacle_list:
             center_x = obstacle_pos[0]
             center_y = obstacle_pos[1]
-            print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+            logger.log(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
             if (x - center_x)**2 + (y - center_y)**2 < radius**2:
                 print("WE HIT THE OBSTACLE! START CRYING!!!!")
                 return True
         return False
 
     def has_reached_goal(self, goal_pos):
-        print(f"self.pos={self.pos}, goal_pos={goal_pos}")
+        logger.log(f"self.pos={self.pos}, goal_pos={goal_pos}")
         x = self.pos[0]
         y = self.pos[1]
         radius = constants.OBSTACLE_RAD
         center_x = goal_pos[0]
         center_y = goal_pos[1]
-        print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+        logger.log(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
         if (x - center_x)**2 + (y - center_y)**2 < radius**2:
             print("WE REACHED THE GOAL! CONGRATS!!!!")
             return True

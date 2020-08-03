@@ -4,8 +4,7 @@
 import math
 import random
 import sys
-sys.path.insert(0,'../')
-sys.path.insert(0,'../')
+sys.path.insert(0,'..')
 import constants
 
 def rel_brg_fm_offset_sensor(true_hdg, sensor_offset, tgt_brg):
