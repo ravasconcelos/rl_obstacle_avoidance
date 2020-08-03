@@ -46,6 +46,7 @@ def find_location_onMap(pos):
     location_in_the_grid.append(int(rest_x / (constants.SMALL_GRID_SIZE / 4)))
     location_in_the_grid.append(int(rest_y / (constants.SMALL_GRID_SIZE / 4)))
     return location_in_the_map, location_in_the_grid
+    
 # This function tio find the policy as per the grid  if there is 1 obtacle in the grid.
 def policy_finder (mylocation,obs):
     
