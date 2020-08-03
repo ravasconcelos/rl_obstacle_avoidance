@@ -4,22 +4,19 @@
 import simpleguitk as simplegui
 import math
 import random
-import robot_baysian_obs_avoid
 import sys
 sys.path.insert(0,'../')
 sys.path.insert(0,'../')
+import obavd3
 import constants
 
 #define globals
 
 g_state = "None"
 
-#start_pos = [10,10]
-#robot_pos = [10, 10]
-robot_co = 1
-#goal_pos = [450,450]
 
-#full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
+robot_co = 1
+
 
 robot_pos=[337.135774033879, 308.1398152539053]
 goal_pos=[343, 305]
@@ -28,11 +25,11 @@ full_obstacle_list=[(499, 180), (263, 7), (121, 333), (328, 233), (3, 424), (86,
 start_pos = robot_pos
 
 #create a sonar array
-#s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = robot_baysian_obs_avoid.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
+
+r1 = obavd3.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
-#define event handlers
+
 
 def click(pos):
     global g_state, start_pos, goal_pos, robot_pos
@@ -41,9 +38,9 @@ def click(pos):
         r1.set_pos(list(pos))
     elif g_state == "Goal":
         goal_pos = pos
-        r1.set_co(robot_baysian_obs_avoid.brg_in_deg(r1.get_pos(), pos))
+        r1.set_co(obavd3.brg_in_deg(r1.get_pos(), pos))
     elif g_state == "Set Robot":
-        r1.set_co(robot_baysian_obs_avoid.brg_in_deg(r1.get_pos(), pos))
+        r1.set_co(obavd3.brg_in_deg(r1.get_pos(), pos))
         r1.set_pos(list(pos))
         r1.delete_history()
     elif g_state == "Add Obs":
