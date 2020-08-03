@@ -46,7 +46,7 @@ def find_location_onMap(pos):
     location_in_the_grid.append(int(rest_x / (constants.SMALL_GRID_SIZE / 4)))
     location_in_the_grid.append(int(rest_y / (constants.SMALL_GRID_SIZE / 4)))
     return location_in_the_map, location_in_the_grid
-    
+
 # This function tio find the policy as per the grid  if there is 1 obtacle in the grid.
 def policy_finder (mylocation,obs):
     
@@ -263,16 +263,11 @@ class Sonar_Array:
                 if abs(rec_index) > n_sensor/2:
                     print ("rec index too large")
                     rec_index = n_sensor/2
-#                    if rec_index < 0:
-#                        rec_index = -n_sensor/2
-#                    else:
-#                        rec_index = n_sensor/2
                 print ("Rec index:", rec_index) 
                 #break # processing completed
             else: #no obstacle in danger zone
                 rec_index = 0
-                #return robot_co, False
-                #print : index = ", sonar.index
+
         #print "break from loop."
         if rec_index == 0 and alert == True:
                 print ("alert with no alteration")
@@ -303,7 +298,7 @@ class Sonar_Array:
                             print ("policy recommend to go down ")
                         
                                                 
-                        return offset, True
+                        return random.randint(1, 45)+offset, True
                          
         
                         
@@ -340,11 +335,10 @@ class Sonar_Array:
                                 print ("policy recommend to go down ")
                             
          
-                return offset,True
+                return random.randint(1, 45)+offset,True
                 
            else:     
-            
-                return (offset%robot_co), True
+                return robot_co, True
         else:# no diversion needed
            obs=[]
            offset =  rec_index * SENSOR_FOV #how much is the angular offset  
@@ -377,7 +371,7 @@ class Sonar_Array:
                                 print ("policy recommend to go down ")
                             
                 
-                return offset,True
+                return random.randint(1, 45)+offset,True
                 
     
     def draw(self, canvas):
