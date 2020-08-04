@@ -13,7 +13,6 @@
 
 Date: August, 4 2020
 
-### **** Important note: This is not a notebook that can be RUN. Its purpose is only for documentation. 
 
 # Table of Contents
 
@@ -222,7 +221,7 @@ according to our Master Policy.
 
   
 <div align="center">
-<img src="images/Algorithm 1.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/Algorithm 1.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 6. Static Policy Algorithm - Playing Phase</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
