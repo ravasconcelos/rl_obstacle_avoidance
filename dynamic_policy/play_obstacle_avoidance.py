@@ -21,7 +21,8 @@ robot_co = 1
 goal_pos = [450,450]
 
 #obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
-full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
+#full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
+full_obstacle_list = [(80, 65), (185, 170), (330, 315), (420, 410)]
 
 #create a sonar array
 r1 = dp_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
@@ -67,7 +68,7 @@ def alter_co(text):
 def draw(canvas):
 
     # draw lines for the small grid for troubleshooting
-    draw_small_grids(canvas)
+    #draw_small_grids(canvas)
 
     # draw grids
     for x in range(0, constants.FRAME_SIZE, constants.SMALL_GRID_SIZE):
