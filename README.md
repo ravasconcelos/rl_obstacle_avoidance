@@ -1027,7 +1027,7 @@ We prepared charts to analyze the performance of all algorithms executed in 200 
 <br>
 <br>
 <div align="center">
-<img src="images/algorithm_accuracy.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/algorithm_accuracy.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 15. Algorithm Accuracy</b></center>
 </div>
 
