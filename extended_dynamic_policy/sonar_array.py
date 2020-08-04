@@ -65,7 +65,7 @@ class Sonar_Array:
         obs=utils.check_obstacle(robot_pos,full_obstacle_list)
                
         action = utils.dynamic_policy_finder(robot_pos,obs,master_policy,goal_pos)
-        print(f"action={action},")
+        print(f"action='{action}'")
         if action == 'R':
             print ("policy recommend to go right ")
             offset=90+random.randint(0,5)
@@ -81,6 +81,8 @@ class Sonar_Array:
         else:
             offset = 0
             print ("no policy?")
+            return offset, False
+            
         #if (I_was_here[-2]==robot_pos):
             #return robot_co+45, True
         print("Robot positon",robot_pos)

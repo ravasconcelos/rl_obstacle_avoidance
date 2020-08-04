@@ -182,16 +182,6 @@ def addObstacleToMonteCarloCoordinates(mylocation_onMap, obs_onMap, obs_location
     obs_location_onGrid_array.append(obs_onGrid)
     return
 
-#    obs_x = obs_onMap[0] - mylocation_onMap[0]
-#    obs_y = obs_onMap[1] - mylocation_onMap[1]
-#    print(f"addObstacleToMonteCarloCoordinates - obs_x={obs_x}, obs_y={obs_y}")
-#    if abs(obs_x) > 2 or abs(obs_y) > 2:
-#        print("addObstacleToMonteCarloCoordinates - the obstacle is out of the Monte Carlo grid")
-#        return
-#    obs_pos_onGrid = (2+obs_x,2+obs_y)
-#    print(f"addObstacleToMonteCarloCoordinates - obs_pos_onGrid={obs_pos_onGrid}")
-
-
 # The obstacle can be in more than one space in the grid
 #           U
 #         L O R 
@@ -370,13 +360,7 @@ def check_obstacle(pos, obs_list):
       obstacles.append(i)
 
     logger.log(f"check_obstacle - obstacles={obstacles}", True)
-    #if (robot_loc_onMap == obs_loc_onMap):
-    #  logger.log(f"(robot_loc_onMap == obs_loc_onMap)", True)  
-    #  obstacles.append(i)
-    #elif robot_loc_onMap[0] +2 >= obs_loc_onMap[0] and robot_loc_onMap[0] - 2 <= obs_loc_onMap[0]:
-    #  if robot_loc_onMap[1] +2 >= obs_loc_onMap[1] and robot_loc_onMap[1] - 2 <= obs_loc_onMap[1]:
-    #    obstacles.append(i)
-    #    logger.log(f"it is in the range of 5x5 square", True)  
+
   return obstacles
 
 # This function is to check if the obtacles and agent are in the same 3x3
