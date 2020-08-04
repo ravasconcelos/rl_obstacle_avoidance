@@ -236,6 +236,7 @@ def play_episode(grid, policy, pi):
   # but r(t) results from taking action a(t-1) from s(t-1) and landing in s(t)
   states_actions_rewards = [(s, a, 0)]
   while True:
+    steps += 1
     r = grid.move(a)
     s = grid.current_state()
     if grid.game_over():
@@ -363,5 +364,8 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
 
 #print (f"returned policy={calculate_gridworld_policy((3,3),[(2,1)])}")
 #print (f"returned policy={calculate_gridworld_policy((3,1),[(0,0)])}")
-#rint (f"returned policy={calculate_gridworld_policy((2,1),[(2,0),(0,0),(1,0)])}")
+#print (f"returned policy={calculate_gridworld_policy((2,1),[(2,0),(0,0),(1,0)])}")
 
+def print_policy_without_grid(P):
+  grid = negative_grid(step_cost=-1)
+  print_policy(P,grid)

@@ -88,47 +88,6 @@ def find_location_onMap(pos):
     return location_in_the_map, location_in_the_grid
 
 
-'''  
-  i=0
-  i1=0
-  loc=0
-  loc1=0
-  for squares in range(0,10):
-    i1=0
-    for quare in range(0,10):
-      loc=0
-      #square.append((i,i1))
-      if (pos[0]>i and pos[0]<=i+50) and (pos[1]>i1 and pos[1]<=i1+50):
-        for rows in range(0,4):
-          loc1=0
-          for col in range(0,4):
-            if ((pos[0]>loc+i and pos[0]<=loc+i+12.5) and (pos[1]>loc1+i1 and pos[1]<=loc1+12.5+i1)):           
-              location_in_the_grid.append(loc)
-              location_in_the_grid.append(loc1)
-              location_in_the_map.append(i)
-              location_in_the_map.append(i1)
-            
-            loc1+=12.5
-          loc+=12.5
-      i1+=50
-    i+=50
-
-  if len(location_in_the_grid) == 2:
-    #To to convert to 4x4 grid each is 12.5 X 12.5 pixels
-    location_in_the_grid[0]=int(location_in_the_grid[0]/12.5)
-    location_in_the_grid[1]=int(location_in_the_grid[1]/12.5)
-    #To to convert to 5x5 map each sqaure is 100X100 pixel
-    location_in_the_map[0]=int(location_in_the_map[0]/50)
-    location_in_the_map[1]=int(location_in_the_map[1]/50)
-  else:
-    print(f"Some bug here... pos={pos}")  
-    location_in_the_grid.append(0)      
-    location_in_the_grid.append(0)      
-    location_in_the_map.append(0)      
-    location_in_the_map.append(0)      
-  return location_in_the_map, location_in_the_grid
-'''
-
 def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     print(f"mylocation={mylocation}, obs={obs}, goal_pos={goal_pos}")
     
@@ -138,9 +97,7 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     obs_location_onGrid_array = []
 
     for obstacle_pos in obs:
-        #_, obs_location_onGrid = find_location_onMap(obstacle_pos)
-        #obs_location_onGrid_array.append((obs_location_onGrid[0],obs_location_onGrid[1]))
-        obs_location_onGrid_array.extend(calculate_obstacle_onGrid(obstacle_pos))
+        obs_location_onGrid_array.extend(calculate_obstacle_onGrid(mylocation_onMap, obstacle_pos))
         print(f"obs_location_onGrid_array={obs_location_onGrid_array}")
     
     end_state = calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos)
@@ -150,12 +107,17 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
 
     if policy_key in master_policy:
         policy = master_policy[policy_key]
+        print("Saved policy:")
+        montecarlo.print_policy_without_grid(policy)
     else:
-        policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onGrid_array)
+        #policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onGrid_array)
+        policy = runMonteCarlo(end_state, obs_location_onGrid_array)
         master_policy[policy_key] = policy
+        print("Created policy:")
+        montecarlo.print_policy_without_grid(policy)
 
     #policy= master_policy[obs_location_onGrid[0]][obs_location_onGrid[1]]
-    direction = policy.get((my_location_onGrid[0],my_location_onGrid[1]), ' ')
+    direction = policy.get(invertCoordinate((my_location_onGrid[0],my_location_onGrid[1])), ' ')
     print(f"direction={direction}")
     return direction
 
@@ -163,77 +125,232 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
 #           U
 #         L O R 
 #           D  
-def calculate_obstacle_onGrid(obstacle_pos):
-    logger.log(f"calculate_obstacle_onGrid - obstacle_pos={obstacle_pos}")
+def calculate_obstacle_onGrid(mylocation_onMap, obstacle_pos):
+    logger.log(f"calculate_obstacle_onGrid - obstacle_pos={obstacle_pos}", True)
     obs_location_onGrid_array = []
     obs_onMap, obs_onGrid = find_location_onMap(obstacle_pos)
-    logger.log(f"calculate_obstacle_onGrid - obs_onGrid={obs_onGrid}")
-    obs_location_onGrid_array.append((obs_onGrid[0],obs_onGrid[1]))
+    logger.log(f"calculate_obstacle_onGrid - mylocation_onMap={mylocation_onMap}, obs_onGrid={obs_onGrid}", True)
+
+    if mylocation_onMap == obs_onMap:
+        obs_location_onGrid_array.append((obs_onGrid[0],obs_onGrid[1]))
+        print(f"Robot and obstacle are in the same grid on the map")
+    else:
+        print(f"Robot and obstacle are NOT in the same grid on the map")
+
     # Up
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]-constants.OBSTACLE_RAD,obstacle_pos[1]])
-    if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        logger.log(f"calculate_obstacle_onGrid - U border_obs_onGrid={border_obs_onGrid}")
-        obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - U border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added U border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
     # Down
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]+constants.OBSTACLE_RAD,obstacle_pos[1]])
-    if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        logger.log(f"calculate_obstacle_onGrid - D border_obs_onGrid={border_obs_onGrid}")
-        obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - D border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added D border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
     # Left 
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0],obstacle_pos[1]-constants.OBSTACLE_RAD])
-    if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        logger.log(f"calculate_obstacle_onGrid - L border_obs_onGrid={border_obs_onGrid}")
-        obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - L border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added L border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
     # Right
     border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0],obstacle_pos[1]+constants.OBSTACLE_RAD])
-    if border_obs_onGrid != obs_onGrid and border_obs_onMap == obs_onMap:
-        logger.log(f"calculate_obstacle_onGrid - R border_obs_onGrid={border_obs_onGrid}")
-        obs_location_onGrid_array.append((border_obs_onGrid[0],border_obs_onGrid[1]))
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - R border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added R border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
+    # North West
+    border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]-constants.OBSTACLE_RAD,obstacle_pos[1]-constants.OBSTACLE_RAD])
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - NW border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added NW border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
+    # North East
+    border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]-constants.OBSTACLE_RAD,obstacle_pos[1]+constants.OBSTACLE_RAD])
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - NE border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added NE border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
+    # South West
+    border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]+constants.OBSTACLE_RAD,obstacle_pos[1]-constants.OBSTACLE_RAD])
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - SW border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added SW border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
+    # South East
+    border_obs_onMap, border_obs_onGrid = find_location_onMap([obstacle_pos[0]+constants.OBSTACLE_RAD,obstacle_pos[1]+constants.OBSTACLE_RAD])
+    border_obs_onGrid = (border_obs_onGrid[0],border_obs_onGrid[1])
+    logger.log(f"calculate_obstacle_onGrid - SE border_obs_onMap={border_obs_onMap}, border_obs_onGrid={border_obs_onGrid}")
+    if border_obs_onMap == mylocation_onMap and (border_obs_onGrid not in obs_location_onGrid_array):
+        logger.log(f"calculate_obstacle_onGrid - added SE border_obs_onGrid={border_obs_onGrid}")
+        obs_location_onGrid_array.append(border_obs_onGrid)
+
     return obs_location_onGrid_array
 
 def calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos):
 
-    print(f"obs_location_onGrid_array={obs_location_onGrid_array}")
+    logger.log(f"obs_location_onGrid_array={obs_location_onGrid_array}")
 
-    possible_end_states = [(0,0),(0,1),(0,2),(0,3),(1,0),(1,3),(2,3),(3,0),(3,1),(3,2),(3,3),]    
-    possible_end_states_in_the_middle = [(1,1),(1,2),(2,1),(2,2)]    
-    print(f"full possible_end_states={possible_end_states}")
+    all_end_states = [(0,0),(0,1),(2,0),(0,3),(1,0),(1,3),(2,3),(3,0),(3,1),(3,2),(3,3),(1,1),(1,2),(2,1),(2,2)]    
+    logger.log(f"full all_end_states={all_end_states}")
     end_state = None
 
     for state in obs_location_onGrid_array:
-        print(f"state={state}")
-        if state in possible_end_states:
-            print(f"possible_end_states.remove(state)")
-            possible_end_states.remove(state)   
-        if state in possible_end_states_in_the_middle:
-            print(f"possible_end_states_in_the_middle.remove(state)")
-            possible_end_states_in_the_middle.remove(state)   
-    print(f"mylocation={mylocation}, goal_pos={goal_pos}, possible_end_states={possible_end_states}")
+        logger.log(f"state={state}")
+        if state in all_end_states:
+            logger.log(f"all_end_states.remove(state)")
+            all_end_states.remove(state)   
+    print(f"mylocation={mylocation}, goal_pos={goal_pos}, all_end_states={all_end_states}")
 
-    # agent is in the bottom right of the target    
-    if mylocation[0] > goal_pos[0] and mylocation[1] > goal_pos[1]:
-        end_state = (0,0)
-    # agent is in the top right of the target    
-    elif mylocation[0] > goal_pos[0] and mylocation[1] < goal_pos[1]:
-        end_state = (3,0)
-    # agent is in the top left of the target    
-    elif mylocation[0] < goal_pos[0] and mylocation[1] < goal_pos[1]:
-        end_state = (3,3)
-    # agent is in the bottom left of the target    
-    else:
-        end_state = (0,3)
+    best_end_states = getBestEndState(mylocation, goal_pos)
+    print(f"best_end_states={best_end_states}")
+    for state in best_end_states:
+        if state not in obs_location_onGrid_array:
+            end_state = state
+            break
 
-    print(f"possible end_state={end_state}")
+    logger.log(f"possible end_state={end_state}")
 
-    if end_state not in possible_end_states:
-        end_state = random.choice(possible_end_states)        
-
-    if end_state is None and len(possible_end_states_in_the_middle) > 0:
-        print("Interesting... we a reunning out of options... let's try the middle")
-        end_state = random.choice(possible_end_states_in_the_middle)
+    if end_state is None and len(all_end_states) > 0:
+        print("We will ramdomly pick an end state")
+        end_state = random.choice(all_end_states)
 
     if end_state is None:
-        print("The grid is full of obstacles... expect a bug")
+        print("We will colide, sorry")
+        end_state = best_end_states[0]
+        if end_state in obs_location_onGrid_array:
+            obs_location_onGrid_array.remove(end_state)
+
     print(f"final end_state={end_state}")
 
     return end_state     
+
+def getBestEndState(mylocation, goal_pos):
+    robot_onMap, _ = find_location_onMap(mylocation)
+    goal_onMap, _ = find_location_onMap(goal_pos)
+
+    print(f"getBestEndState - robot_onMap={robot_onMap}, goal_onMap={goal_onMap}")
+
+    # agent is above the target    
+    if agentIsAboveGoal(robot_onMap, goal_onMap):
+        end_states = [(2,3),(1,3),(0,3),(3,3)]
+    # agent is below the target    
+    elif agentIsBelowGoal(robot_onMap, goal_onMap):
+        end_states = [(2,0),(1,0),(3,0),(0,0)]
+    # agent is on the right of the target    
+    elif agentIsRightOfGoal(robot_onMap, goal_onMap):
+        end_states = [(0,1),(0,3),(0,0),(1,0)]
+    # agent is on the left of the target    
+    elif agentIsLeftOfGoal(robot_onMap, goal_onMap):
+        end_states = [(3,2),(3,1),(3,3),(3,0)]
+    # agent is in the bottom right of the target    
+    elif agentIsBottonRightOfGoal(robot_onMap, goal_onMap):
+        end_states = [(0,0),(1,0),(0,1),(2,0),(0,3)]
+    # agent is in the top right of the target    
+    elif agentIsTopRightOfGoal(robot_onMap, goal_onMap):
+        end_states = [(0,3),(1,3),(2,3),(0,1),(0,0)]
+    # agent is in the top left of the target    
+    elif agentIsTopLeftOfGoal(robot_onMap, goal_onMap):
+        end_states = [(3,3),(3,2),(2,3),(3,1),(1,3)]
+    # agent is in the bottom left of the target    
+    else:
+        print(f"agent is in the bottom left of the target")
+        end_states = [(3,0),(3,1),(2,0),(3,2),(1,0)]
+
+    return end_states
+
+def agentIsAboveGoal(robot_onMap, goal_onMap):
+    print(f"agentIsAboveGoal - robot_onMap]{robot_onMap}, goal_onMap={goal_onMap}")
+    if robot_onMap[0] == goal_onMap[0] and robot_onMap[1] < goal_onMap[1]:
+        return True
+    return False
+
+def agentIsBelowGoal(robot_onMap, goal_onMap):
+    print(f"agentIsBelowGoal - robot_onMap]{robot_onMap}, goal_onMap={goal_onMap}")
+    if robot_onMap[0] == goal_onMap[0] and robot_onMap[1] > goal_onMap[1]:
+        return True
+    return False
+
+def agentIsRightOfGoal(robot_onMap, goal_onMap):
+    print(f"agentIsRightOfGoal - robot_onMap]{robot_onMap}, goal_onMap={goal_onMap}")
+    if robot_onMap[0] > goal_onMap[0] and robot_onMap[1] == goal_onMap[1]:
+        return True
+    return False
+
+def agentIsLeftOfGoal(robot_onMap, goal_onMap):
+    print(f"agentIsLeftOfGoal - robot_onMap]{robot_onMap}, goal_onMap={goal_onMap}")
+    if robot_onMap[0] < goal_onMap[0] and robot_onMap[1] == goal_onMap[1]:
+        return True
+    return False
+
+def agentIsBottonRightOfGoal(robot_onMap, goal_onMap):
+    print(f"agentIsBottonRightOfGoal - robot_onMap]{robot_onMap}, goal_onMap={goal_onMap}")
+    if robot_onMap[0] > goal_onMap[0] and robot_onMap[1] > goal_onMap[1]:
+        return True
+    return False
+
+def agentIsTopRightOfGoal(robot_onMap, goal_onMap):
+    print(f"agentIsTopRightOfGoal - robot_onMap]{robot_onMap}, goal_onMap={goal_onMap}")
+    if robot_onMap[0] > goal_onMap[0] and robot_onMap[1] < goal_onMap[1]:
+        return True
+    return False
+
+def agentIsTopLeftOfGoal(robot_onMap, goal_onMap):
+    print(f"agentIsTopLeftOfGoal - robot_onMap]{robot_onMap}, goal_onMap={goal_onMap}")
+    if robot_onMap[0] < goal_onMap[0] and robot_onMap[1] < goal_onMap[1]:
+        return True
+    return False
+
+def isNearby(pos1, pos2):
+    if abs(pos1[0] - pos2[0]) <= 1 and abs(pos1[1] - pos2[1]) <= 1:
+        return True
+    return False  
+
+# This function is to check if the obtacles are in the nearby grids
+def check_obstacle(pos, obs_list):
+  logger.log(f"check_obstacle - pos={pos}")  
+  obstacles=[]
+  robot_loc_onMap, _ = find_location_onMap(pos)
+  logger.log(f"check_obstacle - robot_loc_onMap={robot_loc_onMap}")
+  for i in obs_list:
+    obs_loc_onMap, _ = find_location_onMap(i)
+    logger.log(f"check_obstacle - obs_loc_onMap={obs_loc_onMap}")
+
+    if isNearby(robot_loc_onMap, obs_loc_onMap):
+      logger.log(f"obs_loc_onMap {obs_loc_onMap} is near to robot_loc_onMap {robot_loc_onMap}")
+      obstacles.append(i)
+    else: 
+      logger.log(f"obs_loc_onMap {obs_loc_onMap} is NOT near to robot_loc_onMap {robot_loc_onMap}")
+
+    logger.log(f"check_obstacle - obstacles={obstacles}", True)
+
+  return obstacles    
+
+def check_obstacle_in_this_grid(pos, obs_list):
+  logger.log(f"check_obstacle_in_this_grid - pos={pos}", True)  
+  mylocation_onMap, _ = find_location_onMap(pos)
+
+  obs_location_onGrid_array = []
+
+  for obstacle_pos in obs_list:
+    obs_location_onGrid_array.extend(calculate_obstacle_onGrid(mylocation_onMap, obstacle_pos))
+  print(f"obs_location_onGrid_array={obs_location_onGrid_array}")
+
+  return len(obs_location_onGrid_array) > 0  
+  
+def runMonteCarlo(end_state, obs_location_onMap_array):
+    newEndState = invertCoordinate(end_state)
+    newObs_location_onMap_array = [invertCoordinate(location) for location in obs_location_onMap_array]
+    return montecarlo.calculate_gridworld_policy(newEndState, newObs_location_onMap_array)
+
+def invertCoordinate(pos):
+    return (pos[1],pos[0])

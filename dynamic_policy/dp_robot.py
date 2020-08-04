@@ -6,6 +6,7 @@ import utils
 import sys
 sys.path.insert(0,'..')
 import constants
+import logger
 
 #define constants
 master_policy={}
@@ -37,7 +38,15 @@ class Robot:
         #re-estimate sensor output by weighted sum method
         co1, need_turn = self.s_array.update(self.pos, self.goal_brg, self.obstacles_in_view, "w_sum", full_obstacle_list,master_policy,I_was_here,goal_pos)
         #print "Path Clear:", self.path_is_clear()
-        if self.path_is_clear(goal_pos):#can we reach the goal directly from here?
+        print(f"Robot.update co1={co1}, need_turn={need_turn}")
+        if utils.check_obstacle_in_this_grid(self.pos,full_obstacle_list):
+            if need_turn:
+                self.co = co1
+                print("There is an obstacle nearby. path not clear. following recommendation")
+            else:
+                self.co = utils.brg_in_deg(self.pos, goal_pos)
+                print("When it happens we have reached the end state of the policy and we dont know the right direction")
+        elif self.path_is_clear(goal_pos):#can we reach the goal directly from here?
             self.co = utils.brg_in_deg(self.pos, goal_pos)
             print("path clear. ignoring recommendation")
         elif need_turn: #do we need to turn
@@ -118,7 +127,7 @@ class Robot:
 
     
     def has_hit_obstacle(self, full_obstacle_list):
-        print(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
+        logger.log(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
         x = self.pos[0]
         y = self.pos[1]
         radius = constants.OBSTACLE_RAD
@@ -126,20 +135,20 @@ class Robot:
         for obstacle_pos in full_obstacle_list:
             center_x = obstacle_pos[0]
             center_y = obstacle_pos[1]
-            print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+            logger.log(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
             if (x - center_x)**2 + (y - center_y)**2 < radius**2:
                 print("WE HIT THE OBSTACLE! START CRYING!!!!")
                 return True
         return False
 
     def has_reached_goal(self, goal_pos):
-        print(f"self.pos={self.pos}, goal_pos={goal_pos}")
+        logger.log(f"self.pos={self.pos}, goal_pos={goal_pos}")
         x = self.pos[0]
         y = self.pos[1]
         radius = constants.OBSTACLE_RAD
         center_x = goal_pos[0]
         center_y = goal_pos[1]
-        print(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
+        logger.log(f"x={x}, y={y}, center_x={center_x}, center_y={center_y}")
         if (x - center_x)**2 + (y - center_y)**2 < radius**2:
             print("WE REACHED THE GOAL! CONGRATS!!!!")
             return True
