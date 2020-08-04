@@ -713,7 +713,7 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
 Here is a simulation of our dynamic policy algorithm. 
 
 <div align="center">
-<img src="images/dynamic_giphy.gif" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/dynamic_giphy.gif" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 9. Dynamic Policy simulation</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
