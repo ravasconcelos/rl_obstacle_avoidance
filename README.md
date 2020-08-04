@@ -43,7 +43,7 @@ After ten weeks of learning additional Artificial Intelligence techniques, which
 ### Problem statement: Find the path for a robot to reach an end point (goal state) while avoiding randomly generated obstacles in a 2D space, using reinforcement learning methods.
 
 <div align="center">
-<img src="images/Problem Identification.jpg" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/Problem Identification.jpg" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 1. Problem Statement</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
@@ -57,7 +57,7 @@ https://bayesianadventures.wordpress.com/2015/08/31/obstacle-avoidance-for-cleve
 For this project, the environment created by the original simulator is called "Robot World".
 
 <div align="center">
-<img src="images/bayesian_giphy.gif" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/bayesian_giphy.gif" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 2. Original Bayesian algorithm simulation</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
@@ -79,7 +79,7 @@ http://www.codeskulptor.org/#user40_EEIxkOtKog_1.py
      
 To effectively use the original code and simulator, we made some changes and adapted the Robot World. Our goal was to focus more on reinforcement learning algorithms than on other parts of the code. 
 <div align="center">
-<img src="images/new_simulator.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/new_simulator.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 3. New Robot World Simulator</b></center>
 <center><i>Source: New Robot World from Term Project</i></center>
 <center><i>.</i></center>
@@ -112,7 +112,7 @@ Discount factor = 0.6<br>
 _   
 
 <div align="center">
-<img src="images/Small Grid.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/Small Grid.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 4. Small Grid approach</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
@@ -125,7 +125,7 @@ _
 To find an optimal policy to help our robot reach its goal without hitting obstacles, we made an operational decision and divided the New Robot World (500 x 500) in 100 4 x 4 position grids. With that, we created a strategy to find the best policy in a smaller grid, considering that we could have 15 different positions for one or two obstacles. We ran the Monte Carlo method to simulate thousands of episodes and value iteration to find optimal q-value for every state in 4 x 4 grid and determine the action based on epsilon soft policy algorithm. The generated master policy is a dictionary of states and actions for all 100 grids. 
 
 <div align="center">
-<img src="images/Training Phase.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/Training Phase.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 5. Static Policy Algorithm - Training Phase</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
@@ -486,7 +486,7 @@ def weighted_sum_method(self, robot_pos, robot_co,full_obstacle_list):
 Here is a simulation of our static policy algorithm
 
 <div align="center">
-<img src="images/bayesian_static_giphy.gif" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/bayesian_static_giphy.gif" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 7. Static Policy simulation</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
@@ -518,7 +518,7 @@ Our reinforcement learning strategy is now considering a dynamic policy. We impl
 
 
 <div align="center">
-<img src="images/Algorithm 2.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/Algorithm 2.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 8. Dynamic Policy Algorithm</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
@@ -991,7 +991,7 @@ def weighted_sum_method(self, robot_pos, robot_co,full_obstacle_list,master_poli
 Here is a simulation of our extended dynamic policy algorithm. 
 
 <div align="center">
-<img src="images/extended_dynamic_giphy.gif" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/extended_dynamic_giphy.gif" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 10. Extended Dynamic Policy simulation</b></center>
 <center><i>Source: Term Project</i></center>
 <center><i>.</i></center>
@@ -1004,25 +1004,25 @@ This algorithm was not as good as the dynamic policy, but was an important step 
 We prepared charts to analyze the performance of all algorithms executed in 200 independent episodes. Here are the results. 
 
 <div align="center">
-<img src="images/bayesian_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/bayesian_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 11. Bayesian Algorithm Performance</b></center>
 </div>
 <br>
 <br>
 <div align="center">
-<img src="images/static_policy_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/static_policy_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 12. Static Policy Algorithm Performance</b></center>
 </div>
 <br>
 <br>
 <div align="center">
-<img src="images/dynamic_policy_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/dynamic_policy_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 13. Dynamic Policy Algorithm Performance</b></center>
 </div>
 <br>
 <br>
 <div align="center">
-<img src="images/extended_dynamic_policy_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/extended_dynamic_policy_200_episodes_onlySteps.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 14. Extended Dynamic Policy Algoritm Performance</b></center>
 </div>
 <br>
@@ -1047,7 +1047,7 @@ Possible extensions of the work include :
 2. Use deep deterministic policy gradient for solving the problem in continuous domain (reference : https://www.youtube.com/watch?v=PngA5YLFuvU&t=187s)
 
 <div align="center">
-<img src="images/robot_movements.png" alt="Drawing" style="width: 800px;"/>
+<img src="https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/images/robot_movements.png" alt="Drawing" style="width: 800px;"/>
 <center><b>Figure 16. An example with reinforcement learning</b></center>
 <center><i>Source: Term Project</i></center>
 </div> 
