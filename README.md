@@ -1,6 +1,7 @@
-# 3547 TERM PROJECT
+# School of Continuing Studies, University of Toronto
 
-## Intelligent Systems and Reinforcement Learning
+# 3547 TERM PROJECT
+# Intelligent Systems and Reinforcement Learning
 
 ### Title: Robot obstacle avoidance with reinforcement learning
 
