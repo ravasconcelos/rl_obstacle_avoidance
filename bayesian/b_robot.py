@@ -1,6 +1,20 @@
-#implementing a robot obstacle avoidance algorithm
+#
+# School of Continuing Studies, University of Toronto
+# 3547 TERM PROJECT
+# Intelligent Systems and Reinforcement Learning
+# Robot obstacle avoidance with reinforcement learning
+#
+# Alexandre Dietrich
+# Ankur Tyagi
+# Haitham Alamri
+# Rodolfo Vasconcelos
+#
 
-#import libraries
+'''
+Implementing a robot obstacle avoidance algorithm.
+Adapted from https://bayesianadventures.wordpress.com/2015/08/31/obstacle-avoidance-for-clever-robots/
+'''
+
 import math
 import random
 import sys

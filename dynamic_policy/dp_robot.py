@@ -1,3 +1,22 @@
+#
+# School of Continuing Studies, University of Toronto
+# 3547 TERM PROJECT
+# Intelligent Systems and Reinforcement Learning
+# Robot obstacle avoidance with reinforcement learning
+#
+# Alexandre Dietrich
+# Ankur Tyagi
+# Haitham Alamri
+# Rodolfo Vasconcelos
+#
+
+'''
+Implementing a robot using reinforcement learning techniques to avoid obstacles.
+This robot uses a Monte Carlo policy to walk.
+The policy is dynamically calculated when the Grid setup (end state position and obstacles) 
+has never seen before.
+'''
+
 import math
 import random
 import sonar
