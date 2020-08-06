@@ -13,6 +13,9 @@
 
 Date: August, 4 2020
 
+The report in Jupyter Notebook format is stored at https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/Term%20Project%20V2.ipynb
+
+The presentation is in the same folder at https://github.com/ravasconcelos/rl_obstacle_avoidance/blob/master/notebook/project_ppt_v1.pdf
 
 # Table of Contents
 
