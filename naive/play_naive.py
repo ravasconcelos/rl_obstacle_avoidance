@@ -14,13 +14,13 @@
 Creates an UI and let the user to see the robot walking in the environment
 '''
 
+#implementing a robot obstacle avoidance algorithm
+
+#import libraries
 import simpleguitk as simplegui
 import math
 import random
-import sonar
-import sonar_array
-import utils
-import edp_robot
+import n_robot
 import sys
 sys.path.insert(0,'..')
 import constants
@@ -29,17 +29,22 @@ import constants
 
 g_state = "None"
 
-start_pos = [10,10]
-robot_pos = [10, 10]
+#robot_pos = [10, 10]
 robot_co = 1
-goal_pos = [450,450]
+#goal_pos = [450,450]
+#full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
 
-#obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
-full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
+robot_pos=[294, 228]                                                                                                                                           
+goal_pos=[294, 313]                                                                                                                                            
+full_obstacle_list=[(204, 118), (131, 138), (84, 202), (15, 19), (70, 33), (475, 115), (396, 368), (47, 130), (251, 213), (104, 381), (243, 247), (312, 377), (
+426, 16), (380, 200), (410, 283), (311, 341)]                                                                                                                  
+
+# robot and start has to be the same in the beginning
+start_pos = robot_pos
 
 #create a sonar array
 #s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
-r1 = edp_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
+r1 = n_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
 #define event handlers
@@ -51,9 +56,9 @@ def click(pos):
         r1.set_pos(list(pos))
     elif g_state == "Goal":
         goal_pos = pos
-        r1.set_co(utils.brg_in_deg(r1.get_pos(), pos))
+        r1.set_co(robot_baysian_obs_avoid.brg_in_deg(r1.get_pos(), pos))
     elif g_state == "Set Robot":
-        r1.set_co(utils.brg_in_deg(r1.get_pos(), pos))
+        r1.set_co(robot_baysian_obs_avoid.brg_in_deg(r1.get_pos(), pos))
         r1.set_pos(list(pos))
         r1.delete_history()
     elif g_state == "Add Obs":
@@ -77,10 +82,9 @@ def set_robot_pos():
 
 def alter_co(text):
     r1.set_co(float(text))
-    r1.update()
+    r1.update(full_obstacle_list, goal_pos)
             
 def draw(canvas):
-
     # draw grids
     for x in range(0, constants.FRAME_SIZE, constants.SMALL_GRID_SIZE):
         canvas.draw_line((x, 0), (x, constants.FRAME_SIZE), 1, 'Gray')
@@ -96,15 +100,16 @@ def draw(canvas):
     #draw the obstacles
     for obs in full_obstacle_list:
         canvas.draw_circle(obs,2,1, "red")
-        canvas.draw_circle(obs,constants.OBSTACLE_RAD, 1, "white") 
+        canvas.draw_circle(obs, constants.OBSTACLE_RAD, 1, "white") 
     
     #draw sonar lines...
     r1.draw(canvas)
-    canvas.draw_text(f"Extended Dynamic Policy", (200, 500), 12, 'White')
+
+    canvas.draw_text(f"Naive", (250, 500), 12, 'White')
 
 
 def step():
-        r1.update()
+    r1.update(full_obstacle_list, goal_pos)
 
 def add_obs():
     global g_state
@@ -124,7 +129,7 @@ btn_add_obs = f1.add_button("Add Obs", add_obs, 100)
 f1.set_draw_handler(draw)
 f1.set_mouseclick_handler(click)
 
+
 #start simplegui
 
-print("f1.start()")
 f1.start()

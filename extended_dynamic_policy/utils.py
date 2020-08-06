@@ -1,3 +1,19 @@
+#
+# School of Continuing Studies, University of Toronto
+# 3547 TERM PROJECT
+# Intelligent Systems and Reinforcement Learning
+# Robot obstacle avoidance with reinforcement learning
+#
+# Alexandre Dietrich
+# Ankur Tyagi
+# Haitham Alamri
+# Rodolfo Vasconcelos
+#
+
+'''
+Utility functions used by several other files
+'''
+
 import math
 import monte_carlo_5x5 as montecarlo
 import numpy as np

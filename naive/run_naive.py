@@ -19,7 +19,7 @@ import random
 import sys
 sys.path.insert(0,'..')
 import constants
-import obavd3
+import n_robot
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import episodes
@@ -51,7 +51,7 @@ def play_episode(robot_pos, goal_pos, full_obstacle_list):
     print (f"full_obstacle_list={full_obstacle_list}")
 
     #create a sonar array
-    r1 = obavd3.Robot(robot_pos.copy(), robot_co, constants.N_SENSOR, goal_pos)
+    r1 = n_robot.Robot(robot_pos.copy(), robot_co, constants.N_SENSOR, goal_pos)
 
     print("000000000000000000000000000000000000000000")
     print("000000000000000000000000000000000000000000")
@@ -96,9 +96,11 @@ episodes_data = {
     "success1" : [],
 }
 
+START = 90
 #for i in range(constants.N_EPISODES):
-for i in range(constants.N_EPISODES):
-    episode_setup = episodes.EPISODES[i]
+for i in range(START, 92, 1):
+    print(f"i={i}")
+    episode_setup = episodes.EPISODES[START+i]
     step_number1, hit_obstcle1, reach_goal1 = play_episode(episode_setup["robot_pos"], episode_setup["goal_pos"], episode_setup["full_obstacle_list"])
     episodes_data["episode"].append(i)
     episodes_data["steps1"].append(step_number1)
@@ -120,13 +122,13 @@ failed_episodes = {
     "y" : []
 }
 
-for episode_index in range(constants.N_EPISODES):
+for episode_index in range(constants.N_EPISODES - START):
     if episodes_data["success1"][episode_index]:
         passed_episodes["x"].append(episode_index)
         passed_episodes["y"].append(episodes_data["steps1"][episode_index])
         passed_episodes["rl"] += 1
 
-for episode_index in range(constants.N_EPISODES):
+for episode_index in range(constants.N_EPISODES - START):
     if episodes_data["success1"][episode_index] == False:
         failed_episodes["x"].append(episode_index)
         failed_episodes["y"].append(episodes_data["steps1"][episode_index])
@@ -136,7 +138,7 @@ fig.suptitle('Obstacle Avoidance')
 episode_steps_plot = axes[0]
 episode_steps_plot.set_title("Episode Steps") 
 
-episode_steps_plot.plot(episodes_data["steps1"], "Blue", label = "Static Policy")
+episode_steps_plot.plot(episodes_data["steps1"], "Blue", label = "Naive")
 episode_steps_plot.scatter(passed_episodes["x"], passed_episodes["y"], label= "Reached the Goal", color= "green",  
             marker= "*", s=30) 
 episode_steps_plot.scatter(failed_episodes["x"], failed_episodes["y"], label= "Hit an Obstacle", color= "red",  
@@ -147,12 +149,12 @@ episode_steps_plot.legend()
 
 print("Accuracy:")
 rl_accuracy = passed_episodes["rl"]/constants.N_EPISODES*100
-print(f"Static Policy: {rl_accuracy}%")
+print(f"Naive: {rl_accuracy}%")
 
 accuracy_plot = axes[1]
 accuracy_plot.set_title("Accuracy") 
 accuracy_plot.set(xlabel='Algorithms', ylabel='Percentage')
-accuracy_plot.bar(["Static Policy"], [rl_accuracy], width=0.4)
+accuracy_plot.bar(["Naive"], [rl_accuracy], width=0.4)
 
 plt.tight_layout()
 plt.show()

@@ -1,3 +1,19 @@
+#
+# School of Continuing Studies, University of Toronto
+# 3547 TERM PROJECT
+# Intelligent Systems and Reinforcement Learning
+# Robot obstacle avoidance with reinforcement learning
+#
+# Alexandre Dietrich
+# Ankur Tyagi
+# Haitham Alamri
+# Rodolfo Vasconcelos
+#
+
+'''
+Set of sensors
+'''
+
 import math
 import random
 import sonar
