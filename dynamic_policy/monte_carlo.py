@@ -345,30 +345,20 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
           a, _ = max_dict(Q[s])
           policy[s] = a
 
-  """## Print results"""
-
-  #plt.plot(deltas)
-  #plt.show()
-
   # find the optimal state-value function
   # V(s) = max[a]{ Q(s,a) }
   V = {}
   for s in policy.keys():
       V[s] = max_dict(Q[s])[1]
 
-  #print("final values:")
-  #print_values(V, grid)
-  #print("final policy:")
-  #print_policy(policy, grid)
-  #print("final Q:")
-  #print_Q(Q,grid)
   return policy
 
-
+# the print statements are for testing purpose
 #print (f"returned policy={calculate_gridworld_policy((3,3),[(2,1)])}")
 #print (f"returned policy={calculate_gridworld_policy((3,1),[(0,0)])}")
 #print (f"returned policy={calculate_gridworld_policy((2,1),[(2,0),(0,0),(1,0)])}")
 
+# used by the robot code to print the policy for troubleshooting
 def print_policy_without_grid(P):
   grid = negative_grid(step_cost=-1)
   print_policy(P,grid)

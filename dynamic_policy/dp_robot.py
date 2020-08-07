@@ -27,10 +27,12 @@ sys.path.insert(0,'..')
 import constants
 import logger
 
-#define constants
-master_policy={}
-I_was_here=[0,0]
+# global variables
+master_policy={} # map of environment setup (end state|obstacle array) and policy
+I_was_here=[0,0] # not currenly used
 
+# Robot is the agent.
+# It knows its position and the goal position
 class Robot:
     def __init__(self, pos, co, n_sensor,goal_pos):
         self.steps = 0
@@ -45,6 +47,7 @@ class Robot:
     def get_obstacles_in_view(self):
         return self.obstacles_in_view
     
+    # this is the most important methond, which moves the agent in the environment
     def update(self, full_obstacle_list, goal_pos):
         self.steps += 1
         self.obstacles_in_view = [] #delete all the old obstacles in view
@@ -73,23 +76,21 @@ class Robot:
             print("path not clear. following recommendation")
         else: # path is not fully clear, but there are no immediate obstacles
             pass
-            #self.co = brg_in_deg(self.pos, goal_pos)
 
         #the robot by one step...
         self.move(1)
         print(f"master_policy.keys()={master_policy.keys()}")
         return self.has_hit_obstacle(full_obstacle_list), self.has_reached_goal(goal_pos)
 
-    def path_is_clear(self, goal_pos):#return True if there is a clear path to the goal
+    #return True if there is a clear path to the goal
+    def path_is_clear(self, goal_pos):
         goal_brg = utils.brg_in_deg(self.pos, goal_pos)
         for obs in self.obstacles_in_view:
             if utils.dist(self.pos, goal_pos) > utils.dist(self.pos, obs):
                 d_obs, obs_brg = utils.dist_and_brg_in_deg(self.pos, obs)
                 rel_brg = abs(utils.relative_brg(goal_brg, obs_brg))
 
-                print(f"rel_brg={rel_brg}")
                 rel_brg_radians = math.radians(rel_brg)
-                print(f"rel_brg_radians={rel_brg_radians}")
                 if rel_brg_radians < -1 or rel_brg_radians > 1:
                     return False
 
@@ -99,8 +100,6 @@ class Robot:
         return True
     
     def move(self, dT):
-        print("VVVVVBVV")        
-        print((self.co))
         u_vec = utils.angle_to_vector(self.co)
         
         self.pos[0] += self.spd * dT * u_vec[1]
@@ -116,11 +115,11 @@ class Robot:
     
     def set_co(self, co):
         self.co = co
-        #print "setting robot co:", self.co
     
     def delete_history(self):
         self.history = []
-   
+
+    # draw the robot in the ui
     def draw(self, canvas):
         #Draw the robot
         canvas.draw_circle(self.pos, 4, 3, "yellow")
@@ -144,7 +143,7 @@ class Robot:
         #print(f"Robot.draw - Steps = {self.steps}")
         canvas.draw_text(f"Steps = {self.steps}", (5, 500), 12, 'White')
 
-    
+    # detect if the robot has hit an obstacle
     def has_hit_obstacle(self, full_obstacle_list):
         logger.log(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
         x = self.pos[0]
@@ -160,6 +159,7 @@ class Robot:
                 return True
         return False
 
+    # detect if the robot has reached the goal
     def has_reached_goal(self, goal_pos):
         logger.log(f"self.pos={self.pos}, goal_pos={goal_pos}")
         x = self.pos[0]

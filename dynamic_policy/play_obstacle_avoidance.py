@@ -27,16 +27,11 @@ import constants
 import numpy as np
 
 #define globals
-
-g_state = "None"
-
+g_state = "None" # ui actions
 start_pos = [10,10]
 robot_pos = [10, 10]
 robot_co = 1
 goal_pos = [450,450]
-
-#obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
-#full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
 full_obstacle_list = [(80, 65), (185, 170), (330, 315), (420, 410)]
 
 #create a sonar array
@@ -45,6 +40,7 @@ r1 = dp_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 r1.update(full_obstacle_list, goal_pos)
 #define event handlers
 
+# clicke event
 def click(pos):
     global g_state, start_pos, goal_pos, robot_pos
     if g_state == "Start":
@@ -60,7 +56,7 @@ def click(pos):
     elif g_state == "Add Obs":
         full_obstacle_list.append(pos)
         print(full_obstacle_list)
-        #update the robot
+    #update the robot
     r1.update(full_obstacle_list, goal_pos)
     g_state = "None"
         
@@ -79,7 +75,8 @@ def set_robot_pos():
 def alter_co(text):
     r1.set_co(float(text))
     r1.update(full_obstacle_list, goal_pos)
-            
+
+# draw the UI elements            
 def draw(canvas):
 
     # draw lines for the small grid for troubleshooting
@@ -107,7 +104,7 @@ def draw(canvas):
 
     canvas.draw_text(f"Dynamic Policy", (250, 500), 12, 'White')
 
-
+# draw the small grid lines for troubleshooting
 def draw_small_grids(canvas):
     # draw grids
     for x in np.arange(0, constants.FRAME_SIZE, constants.OBSTACLE_RAD):
@@ -115,6 +112,7 @@ def draw_small_grids(canvas):
     for y in np.arange(0,constants.FRAME_SIZE,constants.OBSTACLE_RAD):
         canvas.draw_line((0, y), (constants.FRAME_SIZE, y), 1, 'Red')
 
+# Step button event, but notice the robot moves after any click in the canvas
 def step():
         r1.update(full_obstacle_list, goal_pos)
 
@@ -137,5 +135,4 @@ f1.set_draw_handler(draw)
 f1.set_mouseclick_handler(click)
 
 #start simplegui
-
-f1.start()
+f1.start() # after this point the application is event oriented

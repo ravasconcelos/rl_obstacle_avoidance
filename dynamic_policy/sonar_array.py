@@ -22,16 +22,13 @@ import utils
 
 EPISILON = 0.05
 
-# add some random ness
+# add some randomness
 def skip_the_policy():
     if EPISILON > random.random():
         return True
     return False
 
-
-
-
-
+# It has some utility functions for the group of sensors
 class Sonar_Array:
     def __init__(self, n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co):
         self.sonar_list = []
@@ -47,6 +44,7 @@ class Sonar_Array:
         for i in i_pos:#create a list of individual sonars...
             self.sonar_list.append(sonar.Sonar(i, SENSOR_FOV, SENSOR_MAX_R, robot_co))
    
+   # called by the robot to get the direction of the next movement
     def update(self, robot_pos, robot_co, obstacle_list, method,full_obstacle_list,master_policy,I_was_here,goal_pos):
         #update sonar array
         for sonar in self.sonar_list:#update output of each sensor
@@ -94,8 +92,6 @@ class Sonar_Array:
             offset = 0
             print ("no policy?")
             return offset, False
-        #if (I_was_here[-2]==robot_pos):
-            #return robot_co+45, True
         print("Robot positon",robot_pos)
         print("*********")
         print("Robot Co",robot_co)
@@ -103,6 +99,7 @@ class Sonar_Array:
         print("******")                        
         return offset, True
 
+    # draw the sonar
     def draw(self, canvas):
         for sonar in self.sonar_list:
             sonar.draw(canvas)

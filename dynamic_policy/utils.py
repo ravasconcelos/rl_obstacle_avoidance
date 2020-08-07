@@ -46,7 +46,6 @@ def relative_brg(b1, b2):
         rb *= -1
     return rb
 
-
 def angle_to_vector(ang):#resolve angles into vectors
     ang = math.radians(ang)
     return [math.cos(ang), math.sin(ang)]
@@ -103,7 +102,8 @@ def find_location_onMap(pos):
     logger.log(f"location_in_the_grid={location_in_the_grid}")
     return location_in_the_map, location_in_the_grid
 
-
+# will check if there is a policy for this position in the grid, if not, it will be created
+# return the action that should be taked, according with the policy
 def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     print(f"mylocation={mylocation}, obs={obs}, goal_pos={goal_pos}")
     
@@ -114,7 +114,7 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
 
     for obstacle_pos in obs:
         obs_location_onGrid_array.extend(calculate_obstacle_onGrid(mylocation_onMap, obstacle_pos))
-        print(f"obs_location_onGrid_array={obs_location_onGrid_array}")
+        logger.log(f"obs_location_onGrid_array={obs_location_onGrid_array}")
     
     end_state = calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos)
 
@@ -126,13 +126,11 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
         print("Saved policy:")
         montecarlo.print_policy_without_grid(policy)
     else:
-        #policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onGrid_array)
         policy = runMonteCarlo(end_state, obs_location_onGrid_array)
         master_policy[policy_key] = policy
         print("Created policy:")
         montecarlo.print_policy_without_grid(policy)
 
-    #policy= master_policy[obs_location_onGrid[0]][obs_location_onGrid[1]]
     direction = policy.get(invertCoordinate((my_location_onGrid[0],my_location_onGrid[1])), ' ')
     print(f"direction={direction}")
     return direction
@@ -212,6 +210,7 @@ def calculate_obstacle_onGrid(mylocation_onMap, obstacle_pos):
 
     return obs_location_onGrid_array
 
+# finds the best spot for the end state considering the obstacles and the goal position
 def calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos):
 
     logger.log(f"obs_location_onGrid_array={obs_location_onGrid_array}")
@@ -250,6 +249,7 @@ def calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos):
 
     return end_state     
 
+# returns a list of the best places for the end state
 def getBestEndState(mylocation, goal_pos):
     robot_onMap, _ = find_location_onMap(mylocation)
     goal_onMap, _ = find_location_onMap(goal_pos)
@@ -332,6 +332,7 @@ def isNearby(pos1, pos2):
     return False  
 
 # This function is to check if the obtacles are in the nearby grids
+# 150x150px
 def check_obstacle(pos, obs_list):
   logger.log(f"check_obstacle - pos={pos}")  
   obstacles=[]
@@ -347,10 +348,12 @@ def check_obstacle(pos, obs_list):
     else: 
       logger.log(f"obs_loc_onMap {obs_loc_onMap} is NOT near to robot_loc_onMap {robot_loc_onMap}")
 
-    logger.log(f"check_obstacle - obstacles={obstacles}", True)
+    logger.log(f"check_obstacle - obstacles={obstacles}")
 
   return obstacles    
 
+# This function is to check if the  obtacles are in this grid
+# 50x50px
 def check_obstacle_in_this_grid(pos, obs_list):
   logger.log(f"check_obstacle_in_this_grid - pos={pos}", True)  
   mylocation_onMap, _ = find_location_onMap(pos)
@@ -363,10 +366,12 @@ def check_obstacle_in_this_grid(pos, obs_list):
 
   return len(obs_location_onGrid_array) > 0  
   
+# Inverte x and y and run monte carlo
 def runMonteCarlo(end_state, obs_location_onMap_array):
     newEndState = invertCoordinate(end_state)
     newObs_location_onMap_array = [invertCoordinate(location) for location in obs_location_onMap_array]
     return montecarlo.calculate_gridworld_policy(newEndState, newObs_location_onMap_array)
 
+# in the robot world x is col and y is row, but in montecarlo it is the oposite 
 def invertCoordinate(pos):
     return (pos[1],pos[0])

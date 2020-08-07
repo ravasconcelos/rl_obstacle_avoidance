@@ -68,13 +68,9 @@ class Sonar:
         
         if dist < self.max_r: #if the object is within max_r....
             rel_brg = utils.rel_brg_fm_offset_sensor(robot_co, self.offset, brg)#rel brg of tgt from sensor LOS
-            print(f"dist={dist}, rel_brg={rel_brg}")
             rel_brg_radians = math.radians(rel_brg)
-            print(f"rel_brg_radians={rel_brg_radians}")
             if rel_brg_radians < -1 or rel_brg_radians > 1:
                 return False, 0
-            print(f"math.asin(math.radians(rel_brg))={math.asin(math.radians(rel_brg))}")
-            print(f"abs(dist * math.asin(math.radians(rel_brg)))={abs(dist * math.asin(math.radians(rel_brg)))}")
             d_test = abs(dist * math.asin(math.radians(rel_brg)))
             if d_test < constants.OBSTACLE_RAD + constants.ROBOT_RAD: 
                 self.has_valid_echo = True
