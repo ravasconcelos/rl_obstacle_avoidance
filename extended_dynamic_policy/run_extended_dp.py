@@ -25,22 +25,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import episodes
 
-# define constants
-
-def create_random_escalar():
-    return random.randint(0,constants.FRAME_SIZE)
-
-def create_random_position():
-    return [create_random_escalar(), create_random_escalar()]
-
-def create_random_setup():
-    robot_pos = create_random_position()
-    goal_pos = create_random_position()
-    full_obstacle_list = []
-    for _ in range(constants.N_OBSTACLES):
-        full_obstacle_list.append((create_random_escalar(),create_random_escalar()))
-    return robot_pos, goal_pos, full_obstacle_list
-
+# run one episode. Stops when reaches an end state or the max number the steps is reached
 def play_episode(robot_pos, goal_pos, full_obstacle_list):
     robot_co = 1
 
@@ -97,7 +82,7 @@ episodes_data = {
     "success1" : [],
 }
 
-#for i in range(constants.N_EPISODES):
+# execute all the episodes
 for i in range(constants.N_EPISODES):
     episode_setup = episodes.EPISODES[i]
     step_number1, hit_obstcle1, reach_goal1 = play_episode(episode_setup["robot_pos"], episode_setup["goal_pos"], episode_setup["full_obstacle_list"])
@@ -111,6 +96,7 @@ print("Episode: ", episodes_data["episode"])
 print("Steps1: ", episodes_data["steps1"])
 print("Success1: ", episodes_data["success1"])
 
+# prepare to show the statistics
 passed_episodes = {
     "x" : [],
     "y" : [],
@@ -155,6 +141,7 @@ accuracy_plot.set_title("Accuracy")
 accuracy_plot.set(xlabel='Algorithms', ylabel='Percentage')
 accuracy_plot.bar(["Extended Dynamic Policy"], [rl_accuracy], width=0.4)
 
+# show the chart
 plt.tight_layout()
 plt.show()
 

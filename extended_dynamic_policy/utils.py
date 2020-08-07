@@ -46,7 +46,6 @@ def relative_brg(b1, b2):
         rb *= -1
     return rb
 
-
 def angle_to_vector(ang):#resolve angles into vectors
     ang = math.radians(ang)
     return [math.cos(ang), math.sin(ang)]
@@ -84,7 +83,6 @@ def rel_brg_fm_offset_sensor(true_hdg, sensor_offset, tgt_brg):
     
     return tgt_rel_fm_sensor
 
-
 # this function to find the location of agent or obtacles in the map 
 # it convert 500X500 pixels word to 10x10 squares each with 50x50 pixxels
 def find_location_onMap(pos):
@@ -112,7 +110,8 @@ def find_location_onGrid(robot_pos_onMap, pos_onMap):
         grid_y = 2 + abs(grid_y)    
     return (grid_x,grid_y)
 
-
+# will check if there is a policy for this position in the grid, if not, it will be created
+# return the action that should be taked, according with the policy
 def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     print(f"dynamic_policy_finder - mylocation={mylocation}, obs={obs}, goal_pos={goal_pos}")
     
@@ -149,23 +148,24 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
 
         end_state = calculate_end_state_onGrid(mylocation, obs_location_onMap_array, goal_pos)
 
-        #policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onMap_array)
         policy = runMonteCarlo(end_state, obs_location_onMap_array)
         for x in range(-1,2,1):
             for y in range(-1,2,1):
                 master_policy[f"{[x+mylocation_onMap[0],y+mylocation_onMap[1]]}"] = [mylocation_onMap, policy]
 
-    #policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onMap_array)
     direction = policy.get(current_state_on_grid, ' ')
     print(f"direction={direction}")
     return direction
 
+# detects if the position is out of the 5x5 grid
 def isOutOfBounds(x,y):
     print(f"isOutOfBounds - x={x}, y={y}")
     if x < 0 or x > 4 or y < 0 or y > 4:
         return True
     return False
 
+# OOB has to be considered obstacles
+# Robot is always in the center of the 5x5 grid, so there is a padding
 def addOutOfBoundsAsObstacles(mylocation_onMap, obs_location_onGrid_array):
     print(f"addOutOfBoundsAsObstacles - mylocation_onMap={mylocation_onMap}")
     robot_x = mylocation_onMap[0]
@@ -185,7 +185,7 @@ def addOutOfBoundsAsObstacles(mylocation_onMap, obs_location_onGrid_array):
             else:
                 print(f"obs_x={obs_x}, obs_y={obs_y} is in the map, so it should not be considered an obstacle")
     
-
+# aa the obstacles to the monte carlo grid position
 def addObstacleToMonteCarloCoordinates(mylocation_onMap, obs_onMap, obs_location_onGrid_array):
     # the reference point is the center of the grid (2,2)
     print(f"addObstacleToMonteCarloCoordinates - mylocation_onMap={mylocation_onMap}, obs_onMap={obs_onMap}")
@@ -236,6 +236,7 @@ def calculate_obstacle_onMap(mylocation_onMap, obstacle_pos):
 
     return obs_location_onGrid_array
 
+# finds the best place for the end state
 def calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos):
 
     print(f"obs_location_onGrid_array={obs_location_onGrid_array}")
@@ -281,6 +282,7 @@ def calculate_end_state_onGrid(mylocation, obs_location_onGrid_array, goal_pos):
 
     return end_state     
 
+# returns a list of the best places for the end state
 def getBestEndState(mylocation, goal_pos):
     robot_onMap, _ = find_location_onMap(mylocation)
     goal_onMap, _ = find_location_onMap(goal_pos)
@@ -401,11 +403,12 @@ def check_obstacle_3x3(pos, obs_list):
     logger.log(f"check_obstacle_3x3 - obstacles={obstacles}", True)
   return obstacles
 
-
+# Inverte x and y and run monte carlo
 def runMonteCarlo(end_state, obs_location_onMap_array):
     newEndState = invertCoordinate(end_state)
     newObs_location_onMap_array = [invertCoordinate(location) for location in obs_location_onMap_array]
     return montecarlo.calculate_gridworld_policy(newEndState, newObs_location_onMap_array)
 
+# in the robot world x is col and y is row, but in montecarlo it is the oposite 
 def invertCoordinate(pos):
     return (pos[1],pos[0])

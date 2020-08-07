@@ -44,13 +44,12 @@ class Sonar_Array:
         for i in i_pos:#create a list of individual sonars...
             self.sonar_list.append(sonar.Sonar(i, SENSOR_FOV, SENSOR_MAX_R, robot_co))
    
-   # called by the robot to get the direction of the next movement
+    # called by the robot to get the direction of the next movement
     def update(self, robot_pos, robot_co, obstacle_list, method,full_obstacle_list,master_policy,I_was_here,goal_pos):
         #update sonar array
         for sonar in self.sonar_list:#update output of each sensor
             sonar.update(robot_pos, robot_co, obstacle_list)
             
-        #if method == "w_sum":#process data by method of weighted sums
         return self.weighted_sum_method(robot_pos, robot_co,full_obstacle_list,master_policy,I_was_here,goal_pos)
 
     def weighted_sum_method(self, robot_pos, robot_co,full_obstacle_list,master_policy,I_was_here,goal_pos):

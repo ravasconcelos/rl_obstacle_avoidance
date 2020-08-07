@@ -27,23 +27,22 @@ import constants
 
 #define globals
 
-g_state = "None"
-
+g_state = "None" # ui actions
 start_pos = [10,10]
 robot_pos = [10, 10]
 robot_co = 1
 goal_pos = [450,450]
 
-#obstacle_list = [(300, 213), (310, 124), (250, 110), (300, 230)]
 full_obstacle_list = [(110, 100), (200, 210), (310, 300), (400, 410)]
 
-#create a sonar array
-#s1 = Sonar_Array(n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co)
+#create the robot
 r1 = edp_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
+
 #define event handlers
 
+# click event
 def click(pos):
     global g_state, start_pos, goal_pos, robot_pos
     if g_state == "Start":
@@ -59,7 +58,7 @@ def click(pos):
     elif g_state == "Add Obs":
         full_obstacle_list.append(pos)
         print(full_obstacle_list)
-        #update the robot
+    #update the robot
     r1.update(full_obstacle_list, goal_pos)
     g_state = "None"
         
@@ -79,6 +78,7 @@ def alter_co(text):
     r1.set_co(float(text))
     r1.update()
             
+# draw the UI elements            
 def draw(canvas):
 
     # draw grids
@@ -102,7 +102,7 @@ def draw(canvas):
     r1.draw(canvas)
     canvas.draw_text(f"Extended Dynamic Policy", (200, 500), 12, 'White')
 
-
+# Step button event, but notice the robot moves after any click in the canvas
 def step():
         r1.update()
 
@@ -127,4 +127,4 @@ f1.set_mouseclick_handler(click)
 #start simplegui
 
 print("f1.start()")
-f1.start()
+f1.start() # after this point the application is event oriented

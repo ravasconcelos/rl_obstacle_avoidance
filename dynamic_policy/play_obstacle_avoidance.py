@@ -34,13 +34,13 @@ robot_co = 1
 goal_pos = [450,450]
 full_obstacle_list = [(80, 65), (185, 170), (330, 315), (420, 410)]
 
-#create a sonar array
+#create the robot
 r1 = dp_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
 #define event handlers
 
-# clicke event
+# click event
 def click(pos):
     global g_state, start_pos, goal_pos, robot_pos
     if g_state == "Start":

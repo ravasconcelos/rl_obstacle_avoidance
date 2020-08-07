@@ -326,6 +326,7 @@ def agentIsTopLeftOfGoal(robot_onMap, goal_onMap):
         return True
     return False
 
+# returns true if they are 1 grid away
 def isNearby(pos1, pos2):
     if abs(pos1[0] - pos2[0]) <= 1 and abs(pos1[1] - pos2[1]) <= 1:
         return True
