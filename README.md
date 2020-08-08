@@ -1032,10 +1032,37 @@ Folders:
 <a id='Appendix_B'></a>
 # Appendix B - Instructions to Run the Code
 
+The instructions were written you are running Windows 10, WSL and bash. The commands may be different for other OS and terminal tool.
+Before you start:
+1. Ensure you have Python 3.7.7 installed
+1. Install the libraries (pip install <library>):
+    * matplotlib      3.3.0
+    * numpy           1.19.1
+    * SimpleGUITk     1.1.3
+    * if needed, see the full list of libraries in the file pip_list
+1. If running in WSL you may need to install Xming in order to use the SimpleGUITk    
+    1. https://sourceforge.net/projects/xming/
+    1. export DISPLAY=localhost:0
 
-Installation
-
-1. See pip_list for the library version
-2. Download and install Xming: https://sourceforge.net/projects/xming/
-3. set display:
-export DISPLAY=localhost:0
+How to run the code:
+1. Clone the GitHub repository
+    1. git clone git@github.com:ravasconcelos/rl_obstacle_avoidance.git
+    1. cd rl_obstacle_avoidance
+1. Bayesian:
+    1. cd bayesian
+    1. to play using the UI:
+        1. python play_baysian_obs_avoid.py
+    1. to run the batch test:
+        1. python play_baysian_obs_avoid.py
+1. Dynamic Policy:
+    1. cd dynamic_policy
+    1. to play using the UI:
+        1. python play_obstacle_avoidance.py.py
+    1. to run the batch test:
+        1. python run_dynamic_policy.py
+1. Extended Dynamic Policy:
+    1. cd extended_dynamic_policy
+    1. to play using the UI:
+        1. python play_obstacle_avoidance.py.py
+    1. to run the batch test:
+        1. python run_extended_dp.py.py        
