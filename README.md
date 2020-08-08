@@ -542,7 +542,6 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
   update_end_state(grid, end_state)
 
   # print rewards
-  #print("rewards:")
   print_values(grid.rewards, grid)
 
   pi = defaultdict(lambda: 1/len(ALL_POSSIBLE_ACTIONS))  # probability of action (def random)
@@ -566,10 +565,6 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
   else:
       # terminal state or state we can't otherwise get to
       pass
-
-  #print("initial Q:")
-  #print_Q(Q,grid)
-
   # repeat until convergence
   deltas = []
   for t in range(EPISODES):
@@ -605,24 +600,6 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
       for s in policy.keys():
           a, _ = max_dict(Q[s])
           policy[s] = a
-
-  """## Print results"""
-
-  #plt.plot(deltas)
-  #plt.show()
-
-  # find the optimal state-value function
-  # V(s) = max[a]{ Q(s,a) }
-  V = {}
-  for s in policy.keys():
-      V[s] = max_dict(Q[s])[1]
-
-  #print("final values:")
-  #print_values(V, grid)
-  #print("final policy:")
-  #print_policy(policy, grid)
-  #print("final Q:")
-  #print_Q(Q,grid)
   return policy
 
 ```
@@ -640,8 +617,6 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     obs_location_onGrid_array = []
 
     for obstacle_pos in obs:
-        #_, obs_location_onGrid = find_location_onMap(obstacle_pos)
-        #obs_location_onGrid_array.append((obs_location_onGrid[0],obs_location_onGrid[1]))
         obs_location_onGrid_array.extend(calculate_obstacle_onGrid(obstacle_pos))
         print(f"obs_location_onGrid_array={obs_location_onGrid_array}")
     
@@ -656,7 +631,6 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
         policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onGrid_array)
         master_policy[policy_key] = policy
 
-    #policy= master_policy[obs_location_onGrid[0]][obs_location_onGrid[1]]
     direction = policy.get((my_location_onGrid[0],my_location_onGrid[1]), ' ')
     print(f"direction={direction}")
     return direction
@@ -757,7 +731,6 @@ def standard_grid():
   # S  .  .  .
   # .  .  .  E
   g = Grid(5, 5, (2, 2))
-#  rewards = {(3, 3): 0}
   rewards = {}
   actions = {
     (0, 0): ('D', 'R'),
@@ -800,8 +773,6 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
   update_rewards(grid, obstable_list, -5)
   update_end_state(grid, end_state)
 
-  # print rewards
-  #print("rewards:")
   print_values(grid.rewards, grid)
 
   pi = defaultdict(lambda: 1/len(ALL_POSSIBLE_ACTIONS))  # probability of action (def random)
@@ -826,16 +797,9 @@ def calculate_gridworld_policy(end_state=(3,3),obstable_list = []):
       # terminal state or state we can't otherwise get to
       pass
 
-  #print("initial Q:")
-  #print_Q(Q,grid)
-
   # repeat until convergence
   deltas = []
   for t in range(EPISODES):
-      #if t % 1000 == 0:
-          #print(t)
-          #print("Q:")
-          #print_Q(Q,grid)
 
       # generate an episode using pi
       biggest_change = 0
@@ -884,7 +848,6 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
     print(f"dynamic_policy_finder - mylocation_onMap={mylocation_onMap}")
 
     policy_key = f"{mylocation_onMap}"
-    #policy_key = f"{end_state}|{obs_location_onMap_array}"
     print(f"policy_key={policy_key}")
 
     current_state_on_grid = (2,2)
@@ -913,13 +876,11 @@ def dynamic_policy_finder (mylocation, obs, master_policy, goal_pos):
 
         end_state = calculate_end_state_onGrid(mylocation, obs_location_onMap_array, goal_pos)
 
-        #policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onMap_array)
         policy = runMonteCarlo(end_state, obs_location_onMap_array)
         for x in range(-1,2,1):
             for y in range(-1,2,1):
                 master_policy[f"{[x+mylocation_onMap[0],y+mylocation_onMap[1]]}"] = [mylocation_onMap, policy]
 
-    #policy = montecarlo.calculate_gridworld_policy(end_state, obs_location_onMap_array)
     direction = policy.get(current_state_on_grid, ' ')
     print(f"direction={direction}")
     return direction
