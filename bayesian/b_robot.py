@@ -167,6 +167,7 @@ class Sonar:
         canvas.draw_text(str(self.index),(self.vec[0]+4, self.vec[1]+4), 10, "lime"),
         #print self.index, " VE:" , self.has_valid_echo
         
+# It has some utility functions for the group of sensors
 class Sonar_Array:
     def __init__(self, n_sensor, SENSOR_FOV, SENSOR_MAX_R, robot_co):
         self.sonar_list = []
@@ -182,6 +183,7 @@ class Sonar_Array:
         for i in i_pos:#create a list of individual sonars...
             self.sonar_list.append(Sonar(i, SENSOR_FOV, SENSOR_MAX_R, robot_co))
    
+    # called by the robot to get the direction of the next movement
     def update(self, robot_pos, robot_co, obstacle_list, method):
         #update sonar array
         for sonar in self.sonar_list:#update output of each sensor
@@ -212,21 +214,13 @@ class Sonar_Array:
                     print("sum_d == 0 is this a bug??? what to do?")
                     sum_d = 1
                 rec_index = math.ceil(constants.TURN_SCALE_FACTOR * float(sum_wt)/sum_d) #index of sonar with best LOS
-                #rec_index = int(TURN_SCALE_FACTOR * float(sum_d)/sum_wt)
-                print("Rec index:", rec_index)
                 if abs(rec_index) > self.n_sensor/2:
                     print("rec index too large")
                     rec_index = self.n_sensor/2
-#                    if rec_index < 0:
-#                        rec_index = -n_sensor/2
-#                    else:
-#                        rec_index = n_sensor/2
                 print("Rec index:", rec_index) 
                 break # processing completed
             else: #no obstacle in danger zone
                 rec_index = 0
-                #return robot_co, False
-                #print : index = ", sonar.index
         #print "break from loop."
         if rec_index == 0 and alert == True:
             print("alert with no alteration")
@@ -239,10 +233,13 @@ class Sonar_Array:
             print("no alert no diversion")
             return robot_co, False
     
+    # draw the sonar
     def draw(self, canvas):
         for sonar in self.sonar_list:
             sonar.draw(canvas)
 
+# Robot is the agent.
+# It knows its position and the goal position
 class Robot:
     def __init__(self, pos, co, n_sensor, goal_pos):
         self.steps = 0
@@ -259,6 +256,7 @@ class Robot:
     def get_obstacles_in_view(self):
         return self.obstacles_in_view
     
+    # this is the most important methond, which moves the agent in the environment
     def update(self, full_obstacle_list, goal_pos):
         self.steps += 1
         self.obstacles_in_view = [] #delete all the old obstacles in view
@@ -270,22 +268,18 @@ class Robot:
         self.goal_brg = brg_in_deg(self.pos, goal_pos)
         #re-estimate sensor output by weighted sum method
         co1, need_turn = self.s_array.update(self.pos, self.goal_brg, self.obstacles_in_view, "w_sum")
-        #print "Path Clear:", self.path_is_clear()
         if self.path_is_clear(goal_pos):#can we reach the goal directly from here?
             self.co = brg_in_deg(self.pos, goal_pos)
-            #print "path clear. ignoring recommendation"
         elif need_turn: #do we need to turn
             self.co = co1
-            #print "path not clear. following recommendation"
         else: # path is not fully clear, but there are no immediate obstacles
             pass
-            #self.co = brg_in_deg(self.pos, goal_pos)
 
         #move the robot by one step...
         self.move(1)
         return self.has_hit_obstacle(full_obstacle_list), self.has_reached_goal(goal_pos)
 
-
+    #return True if there is a clear path to the goal
     def path_is_clear(self, goal_pos):#return True if there is a clear path to the goal
         goal_brg = brg_in_deg(self.pos, goal_pos)
         for obs in self.obstacles_in_view:
@@ -302,6 +296,7 @@ class Robot:
                     return False
         return True
 
+    # detect if the robot has reached the goal
     def has_reached_goal(self, goal_pos):
         print(f"self.pos={self.pos}, goal_pos={goal_pos}")
         x = self.pos[0]
@@ -315,6 +310,7 @@ class Robot:
             return True
         return False
     
+    # detect if the robot has hit an obstacle
     def has_hit_obstacle(self, full_obstacle_list):
         print(f"self.pos={self.pos}, full_obstacle_list={full_obstacle_list}")
         x = self.pos[0]
@@ -352,6 +348,7 @@ class Robot:
     def delete_history(self):
         self.history = []
 
+    # draw the robot in the ui
     def draw(self, canvas):
         #Draw the robot
         canvas.draw_circle(self.pos, 4, 3, "yellow")

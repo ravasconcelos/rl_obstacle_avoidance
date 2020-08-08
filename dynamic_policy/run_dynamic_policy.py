@@ -35,7 +35,7 @@ def play_episode(robot_pos, goal_pos, full_obstacle_list):
     print (f"goal_pos={goal_pos}")
     print (f"full_obstacle_list={full_obstacle_list}")
 
-    #create a sonar array
+    #create robot
     r1 = dp_robot.Robot(robot_pos.copy(), robot_co, constants.N_SENSOR, goal_pos)
 
     print("000000000000000000000000000000000000000000")

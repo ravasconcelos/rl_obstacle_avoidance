@@ -38,6 +38,7 @@ full_obstacle_list = [(80, 65), (185, 170), (330, 315), (420, 410)]
 r1 = dp_robot.Robot(robot_pos, robot_co, constants.N_SENSOR, goal_pos)
 
 r1.update(full_obstacle_list, goal_pos)
+
 #define event handlers
 
 # click event
