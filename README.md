@@ -92,11 +92,11 @@ To effectively use the original code and simulator, we made some changes and ada
 <a id='Directory_Strategy'></a>
 # Directory Strategy
 
-These re the repository directories and what you can find and each one:
+These are the repository directories and what you can find into each one:
 1. root: readme file, constants and test data generator;
 1. bayesian: refactored code used as base line for a robot able to avoid obstacles using sensors and math calculations;
 1. dynamic_policy: reinforcement learning approach to solve obstacle avoidance problem using Monte Carlo policy dynamically calculated;
-1. extended_dynamic_policy: reinforcement learning approach to solve obstacle avoidance problem using Monte Carlo policy dynamically calculated in a 5x5 grid of 50x50px elements;
+1. extended_dynamic_policy: reinforcement learning approach to solve obstacle avoidance problem using Monte Carlo policy dynamically calculated in a 5x5 grid of elements with 50x50px long;
 1. naive: a robot that moves towards the goal whithout trying to avoid obstacles. Used for performance comparisson.
 1. notebook: report file in a Jupyter Notebook file, presentation in pdf and ptt formats
 1. static_policy: reinforcement learning approach to solve obstacle avoidance problem using Monte Carlo policy statically calculated;
