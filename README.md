@@ -1070,8 +1070,8 @@ How to run the code:
 
 <a id='Appendix_C'></a>
 # Appendix C - Video
-<a href="https://www.youtube.com/watch?v=a7QUwIpaBNQ">
-<img src="https://img.youtube.com/vi/a7QUwIpaBNQ/0.jpg" alt="Drones Autonomous Collision Avoidance using AI Reinforcement Learning" target=”_blank”/>
+<a href="https://www.youtube.com/watch?v=a7QUwIpaBNQ" target=”_blank”>
+<img src="https://img.youtube.com/vi/a7QUwIpaBNQ/0.jpg" alt="Drones Autonomous Collision Avoidance using AI Reinforcement Learning" />
     <br>
 <center><b>Drones Autonomous Collision Avoidance using AI Reinforcement Learning</b></center>
 </a>
