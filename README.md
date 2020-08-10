@@ -35,6 +35,7 @@ The presentation is in the same folder at https://github.com/ravasconcelos/rl_ob
 * [Conclusion](#Conclusion)
 * [Appendix A - Code and Documentation](#Appendix_A)
 * [Appendix B - Instructions to Run the Code](#Appendix_B)
+* [Appendix C - Video](#Appendix_C)
 
 <a id='Introduction'></a>
 # Introduction
@@ -1066,3 +1067,11 @@ How to run the code:
         1. python play_obstacle_avoidance.py.py
     1. to run the batch test:
         1. python run_extended_dp.py.py        
+
+<a id='Appendix_C'></a>
+# Appendix C - Video
+<a href="https://www.youtube.com/watch?v=a7QUwIpaBNQ">
+<img src="https://img.youtube.com/vi/a7QUwIpaBNQ/0.jpg" alt="Drones Autonomous Collision Avoidance using AI Reinforcement Learning" />
+    <br>
+<center><b>Drones Autonomous Collision Avoidance using AI Reinforcement Learning</b></center>
+</a>
